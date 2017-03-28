@@ -1,4 +1,4 @@
-# The Project
+# splitQ
 
 > Shared payment for travel
 
