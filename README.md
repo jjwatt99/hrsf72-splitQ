@@ -4,10 +4,10 @@
 
 ## Team
 
-  - Whitney Zhu
-  - Gary Wong
-  - Duy Aiden Nguyen
-  - Eugene Song 
+  - JJ Gutierrez
+  - Dale Toney
+  - Tim Nguyen
+  - Stephen Makowski 
 
 ## Table of Contents
 
