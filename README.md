@@ -1,13 +1,13 @@
-# The Project
+# splitQ
 
 > Shared payment for travel
 
 ## Team
 
-  - Whitney Zhu
-  - Gary Wong
-  - Duy Aiden Nguyen
-  - Eugene Song 
+  - JJ Gutierrez
+  - Dale Toney
+  - Tim Nguyen
+  - Stephen Makowski 
 
 ## Table of Contents
 
