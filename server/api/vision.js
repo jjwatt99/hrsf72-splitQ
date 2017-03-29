@@ -3,14 +3,15 @@ const gcloud = require('google-cloud');
 const app = express();
 const Promise = require('bluebird');
 const index = require('../index.js');
+const keys = require('../../public/config.js');
 
 //Google-cloud mod setup
 const vision = gcloud.vision;
 const visionClient = vision({
   projectId: 'gewd-161701',
   credentials: {
-    client_email: process.env.client_email,
-    private_key: process.env.private_key.replace(/\\n/g, '\n')
+    client_email: keys.googleKey,
+    private_key: keys.email
   }
 });
 
