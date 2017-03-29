@@ -34,7 +34,7 @@ app.use(fileUpload());
 app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
 app.use(require('express-session')({
-  secret: 'thisCouldBeAnything',
+  secret: process.env.SESSION_SECRET || 'thisCouldBeAnything',
   resave: true,
   saveUninitialized: true
 }));
@@ -54,8 +54,8 @@ passport.deserializeUser(function(obj, cb) {
 
 
 passport.use(new FacebookStrategy({
-  clientID:178117606038161,
-  clientSecret: '46b97d04d73253dcbcb443a6b3741ccb',
+  clientID: process.env.FB_CLIENT_ID || '178117606038161',
+  clientSecret: process.env.FB_CLIENT_SECRET || '46b97d04d73253dcbcb443a6b3741ccb',
   callbackURL: '/auth/facebook/callback',
   profileFields: ['name', 'email','id','picture'],
 },
