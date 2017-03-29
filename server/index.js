@@ -34,7 +34,7 @@ app.use(fileUpload());
 app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
 app.use(require('express-session')({
-  secret: process.env.SESSION_SECRET,
+  secret: 'thisCouldBeAnything',
   resave: true,
   saveUninitialized: true
 }));
@@ -54,20 +54,23 @@ passport.deserializeUser(function(obj, cb) {
 
 
 passport.use(new FacebookStrategy({
-  clientID: process.env.FB_CLIENT_ID,
-  clientSecret: process.env.FB_CLIENT_SECRET,
+  clientID:178117606038161,
+  clientSecret: '46b97d04d73253dcbcb443a6b3741ccb',
   callbackURL: '/auth/facebook/callback',
-  profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
+  profileFields: ['name', 'email','id','picture'],
 },
 
   function(accessToken, refreshToken, profile, cb) {
     process.nextTick(function () {
       let userInfo = {
-        name: profile._json.name,
+        name: profile._json.first_name + ' ' + profile._json.last_name,
         fb_id: profile._json.id,
         token: accessToken,
-        email: profile._json.email
+        email: profile._json.email,
+        picture: profile._json.picture.data.url
       };
+      console.log('====================== user name', profile._json, '-----type of', typeof profile)
+      console.log(')))((((((()))))))', userInfo)
       db.createNewUser(userInfo);
       return cb(null, userInfo);
     });
@@ -147,10 +150,7 @@ app.get('*', checkAuthentication, authHelper, (req, res) => {
 });
 
 app.get('/testing', function(req, res) {
-  res.send('hello world');
-  console.log('req.cookies is ========', req.cookies);
-  console.log('req.session is ========', req.session);
-  console.log('req.session.user is ========', req.session.user);
+  console.log('=========================================hello=====')
 });
 
 //To be used for testing and seeing requests
