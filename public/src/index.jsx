@@ -71,7 +71,7 @@ class App extends React.Component {
   verifyAuthentication(userInfo) {
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
-      username: userInfo.name || '',
+      username: userInfo.name || 'Guest',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
       fb_id: userInfo.fb_id || ''
     });
@@ -320,6 +320,7 @@ class App extends React.Component {
               path ="/profile"
               isAuthenticated={this.state.isAuthenticated}
               component={Profile}
+              username={this.state.username}
             />
             <PrivateRoute
               path ="/upload-receipt"
