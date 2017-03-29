@@ -7,7 +7,8 @@ const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick}
       <a href="#" onClick={menuOnClick} className='menu-icon'></a>
       <Link to="/" className='brand'>Diff</Link>
       <nav className='menu'>
-        <Link to="/" className='link'>Home</Link>
+        <Link to="/profile" className='link'>My Profile</Link>
+        <Link to="/" className='link'>Create a new Trip</Link>
         <Link to="/recent-trips" className='link'>Recent Trips</Link>
         {isAuthenticated ? null : <Link to="/login" className='link'>Login</Link>}
         {!isAuthenticated ? null : <Link to="/logout" onClick={handleClickLogout} className='link'>Logout</Link>}
