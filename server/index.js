@@ -6,7 +6,7 @@ const db = require('./dbHelpers');
 const connection = require('./db-mysql');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
-const KEYS = process.env.fbKey;
+const keys = require('../public/config.js');
 const fileUpload = require('express-fileupload');
 const app = express();
 const cloudinary = require('cloudinary');
@@ -34,7 +34,7 @@ app.use(fileUpload());
 app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
 app.use(require('express-session')({
-  secret: process.env.SESSION_SECRET,
+  secret: 'a',
   resave: true,
   saveUninitialized: true
 }));
@@ -54,8 +54,8 @@ passport.deserializeUser(function(obj, cb) {
 
 
 passport.use(new FacebookStrategy({
-  clientID: process.env.FB_CLIENT_ID,
-  clientSecret: process.env.FB_CLIENT_SECRET,
+  clientID: keys.fbId,
+  clientSecret: keys.fbSecret,
   callbackURL: '/auth/facebook/callback',
   profileFields: ['id', 'email', 'displayName', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified'],
 },

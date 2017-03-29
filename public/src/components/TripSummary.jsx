@@ -8,6 +8,7 @@ class TripSummary extends React.Component {
   }
 
   render() {
+    console.log('trip summary', this.props.data.recent);
     return(
       <div className='page-container'>
         <h1>Most Recent Trips</h1>
