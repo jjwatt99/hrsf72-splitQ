@@ -18,6 +18,9 @@ coverage
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
+# Email and Keys
+public/config.js
+
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 node_modules/
 build/
@@ -26,6 +29,9 @@ temp/
 api/testResults/
 .env
 bundle.js
+
+# File Settings
+.DS_Store
 
 # Dependency directorys
 # Deployed apps should consider commenting these lines out:
