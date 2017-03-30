@@ -71,6 +71,7 @@ passport.use(new FacebookStrategy({
       };
       console.log('====================== user name', profile._json, '-----type of', typeof profile)
       console.log(')))((((((()))))))', userInfo)
+      localStorage.user.picture = userInfo.picture
       db.createNewUser(userInfo);
       return cb(null, userInfo);
     });
@@ -136,7 +137,8 @@ app.get('/verify', authHelper, function(req, res) {
   let userInfo = {
     isAuthenitcated: localStorage.isAuthenitcated,
     name: localStorage.user.name,
-    fb_id: localStorage.user.fb_id
+    fb_id: localStorage.user.fb_id,
+    picture: localStorage.user.picture
   };
   res.send(userInfo);
 });

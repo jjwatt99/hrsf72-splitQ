@@ -14,7 +14,7 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import PrivateRouteHome from './components/PrivateRouteHome.jsx';
 import Util from './lib/util.js';
 import CreateItem from './components/CreateItem.jsx';
-import Notifications from './components/Notifications.jsx'
+import Notifications from './components/Notifications.jsx';
 import $ from 'jquery';
 
 
@@ -35,7 +35,7 @@ class App extends React.Component {
       member: '',
       memberExist: false,
       name: '',
-      photoUrl: 'http://graph.facebook.com/100010411231134/picture?type=square',
+      photoUrl: '',
       sideMenuState: false,
       amount: '',
       sumBill: '',
@@ -46,6 +46,8 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
+      entitlement: null,
+      debt: null,
       recent: [ {name: 'No trips yet. Now create one!'}]
     };
 
@@ -71,12 +73,13 @@ class App extends React.Component {
   }
 
   verifyAuthentication(userInfo) {
-    console.log(userInfo.picture);
+    console.log(userInfo);
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
-      fb_id: userInfo.fb_id || ''
+      fb_id: userInfo.fb_id || '',
+      photoUrl: userInfo.picture
     });
   }
 
@@ -303,6 +306,8 @@ class App extends React.Component {
             onClick={this.state.sideMenuState ? this.closeMenu : null}
             className={this.state.sideMenuState ? 'site-pusher-on' : 'site-pusher'}>
             <Navbar
+              debt={this.state.debt}
+              entitlement={this.state.entitlement}
               username={this.state.username}
               photoUrl={this.state.photoUrl} 
               isAuthenticated={this.state.isAuthenticated}
