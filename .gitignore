@@ -28,7 +28,7 @@ env/
 temp/
 api/testResults/
 .env
-bundle.js
+/public/dist/bundle.js
 
 # File Settings
 .DS_Store
