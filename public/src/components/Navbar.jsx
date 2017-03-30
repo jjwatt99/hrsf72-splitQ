@@ -1,13 +1,13 @@
   import React from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 
-const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick}) => (
+const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick, username, photoUrl}) => (
   <header>
     <div className='navbar-component'>
       <a href="#" onClick={menuOnClick} className='menu-icon'></a>
       <Link to="/" className='brand'>Diff</Link>
       <nav className='menu'>
-        <Link to="/profile" className='link'>My Profile</Link>
+        <img src={photoUrl}></img>
         <Link to="/" className='link'>Create a new Trip</Link>
         <Link to="/recent-trips" className='link'>Recent Trips</Link>
         <Link to="/notifications" className='link'>Notifications</Link>

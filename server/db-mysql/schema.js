@@ -5,6 +5,7 @@ module.exports = {
       name          varchar(50) NOT NULL,\
       email          varchar(50) NOT NULL DEFAULT \'Payee\',\
       token          varchar(360) NOT NULL DEFAULT \'Payee\',\
+      picture        varchar(360) NOT NULL DEFAULT \'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pomeranian.JPG/200px-Pomeranian.JPG\',\
       PRIMARY KEY   (ID)\
     )',
   trips: 'CREATE TABLE IF NOT EXISTS trips (\

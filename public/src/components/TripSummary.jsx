@@ -13,7 +13,7 @@ class TripSummary extends React.Component {
       <div className='page-container'>
         <h1>Most Recent Trips</h1>
         <div className='trip-summary'>{this.props.data.recent.map((item,index) => {
-          return (<p key={index} >{item.name}</p>)
+          return (<TripEntry trip={item} />)
         })}
         </div>
       </div>
