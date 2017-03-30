@@ -8,7 +8,7 @@ const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick,
       <a href="#" onClick={menuOnClick} className='menu-icon'></a>
       <Link to="/" className='brand'>Diff</Link>
       <nav className='menu'>
-        {isAuthenticated ? <UserBar username={username} photoUrl={photoUrl} /> : <span>You are currently not logged in! Please login with Facebook!</span>}
+        <UserBar isAuthenticated={isAuthenticated} username={username} photoUrl={photoUrl} />
         <Link to="/profile" className='link'>My Profile</Link>
         <Link to="/" className='link'>Create a new Trip</Link>
         <Link to="/recent-trips" className='link'>Recent Trips</Link>

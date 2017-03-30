@@ -1,9 +1,11 @@
 import React from 'react';
 
-const UserBar = ({photoUrl, username}) => (
+const UserBar = ({isAuthenticated, photoUrl, username}) => (
   <div className="user-bar">
-  	<img src={photoUrl}></img>
-    You are signed in as {username}
+  	{isAuthenticated ? <img src={photoUrl}></img> :
+  null	}
+    {isAuthenticated ? <span>You are signed in as {username}</span> : 
+    <span>You have not signed yet! Please login with facebook</span>}
   </div>
 )
 
