@@ -615,3 +615,8 @@ textarea#tripDesc::-webkit-input-placeholder{
   height: 500px;
   overflow-y: auto;
 }
+
+.user-bar {
+  background-color: 'black';
+  color: 'white';
+}

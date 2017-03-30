@@ -1,5 +1,6 @@
-  import React from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+import UserBar from './UserBar.jsx';
 
 const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick, username, photoUrl}) => (
   <header>
@@ -7,7 +8,8 @@ const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick,
       <a href="#" onClick={menuOnClick} className='menu-icon'></a>
       <Link to="/" className='brand'>Diff</Link>
       <nav className='menu'>
-        <img src={photoUrl}></img>
+        {isAuthenticated ? <UserBar username={username} photoUrl={photoUrl} /> : <span>You are currently not logged in! Please login with Facebook!</span>}
+        <Link to="/profile" className='link'>My Profile</Link>
         <Link to="/" className='link'>Create a new Trip</Link>
         <Link to="/recent-trips" className='link'>Recent Trips</Link>
         <Link to="/notifications" className='link'>Notifications</Link>
