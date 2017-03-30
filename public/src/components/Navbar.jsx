@@ -1,4 +1,4 @@
-import React from 'react';
+  import React from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 
 const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick}) => (
@@ -10,6 +10,7 @@ const Navbar = ({isAuthenticated, handleClickLogout, sideMenuState, menuOnClick}
         <Link to="/profile" className='link'>My Profile</Link>
         <Link to="/" className='link'>Create a new Trip</Link>
         <Link to="/recent-trips" className='link'>Recent Trips</Link>
+        <Link to="/notifications" className='link'>Notifications</Link>
         {isAuthenticated ? null : <Link to="/login" className='link'>Login</Link>}
         {!isAuthenticated ? null : <Link to="/logout" onClick={handleClickLogout} className='link'>Logout</Link>}
       </nav>

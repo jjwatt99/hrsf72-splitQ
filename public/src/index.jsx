@@ -14,6 +14,7 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import PrivateRouteHome from './components/PrivateRouteHome.jsx';
 import Util from './lib/util.js';
 import CreateItem from './components/CreateItem.jsx';
+import Notifications from './components/Notifications.jsx'
 import $ from 'jquery';
 
 
@@ -373,6 +374,12 @@ class App extends React.Component {
               component={TripSummary}
               data={this.state}
               recent={this.getRecentTrip}
+            />
+            <PrivateRoute
+              path="/notifications"
+              isAuthenticated={this.state.isAuthenticated}
+              component={Notifications}
+              data={this.state}
             />
             <Route path ="/login" render={() => (
               this.state.isAuthenticated ? <Redirect to="/" /> : <Login />
