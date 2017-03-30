@@ -19,7 +19,7 @@ coverage
 .grunt
 
 # Email and Keys
-public/config.js
+./public/config.js
 
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 node_modules/
@@ -28,7 +28,7 @@ env/
 temp/
 api/testResults/
 .env
-/public/dist/bundle.js
+./public/dist/bundle.js
 
 # File Settings
 .DS_Store
