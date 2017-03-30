@@ -617,6 +617,7 @@ textarea#tripDesc::-webkit-input-placeholder{
 }
 
 .user-bar {
-  background-color: 'black';
-  color: 'white';
+  border-bottom: #F7F7F7 solid 2px;
+  color: #fff;
+  padding: 5px;
 }

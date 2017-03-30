@@ -46,6 +46,8 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
+      entitlement: null,
+      debt: null,
       recent: [ {name: 'No trips yet. Now create one!'}]
     };
 
@@ -304,6 +306,8 @@ class App extends React.Component {
             onClick={this.state.sideMenuState ? this.closeMenu : null}
             className={this.state.sideMenuState ? 'site-pusher-on' : 'site-pusher'}>
             <Navbar
+              debt={this.state.debt}
+              entitlement={this.state.entitlement}
               username={this.state.username}
               photoUrl={this.state.photoUrl} 
               isAuthenticated={this.state.isAuthenticated}
