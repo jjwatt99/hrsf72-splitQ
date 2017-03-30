@@ -69,8 +69,6 @@ passport.use(new FacebookStrategy({
         email: profile._json.email,
         picture: profile._json.picture.data.url
       };
-      console.log('====================== user name', profile._json, '-----type of', typeof profile)
-      console.log(')))((((((()))))))', userInfo)
       db.createNewUser(userInfo);
       return cb(null, userInfo);
     });
@@ -147,10 +145,6 @@ app.get('*', checkAuthentication, authHelper, (req, res) => {
   } else {
     res.sendFile(path.resolve(__dirname, '..', 'public', 'dist', 'index.html'));
   }
-});
-
-app.get('/testing', function(req, res) {
-  console.log('=========================================hello=====')
 });
 
 //To be used for testing and seeing requests
