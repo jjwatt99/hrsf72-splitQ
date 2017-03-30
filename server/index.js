@@ -208,7 +208,7 @@ app.post('/summary', (req, res) => {
 
 // this will duplicate with Duy's /recent
 app.post('/recent', (req, res) => {
-  db.getReceiptsAndTrips({adminName: 'Gary Wong', tripName: 'lol123'})
+  db.getReceiptsAndTrips({adminName: 'Stephen Makowski', tripName: 'lol123'})
   .then( (results) => {
     res.send(results);
   });

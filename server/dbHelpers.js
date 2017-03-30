@@ -2,7 +2,9 @@ const mysql = require('mysql');
 const Promise = require('bluebird');
 const db = mysql.createPool({
   user: 'root',
-  password: ''
+  password: '',
+  host: 'localhost',
+  database: 'gewd'
 });
 
 Promise.promisifyAll(db);

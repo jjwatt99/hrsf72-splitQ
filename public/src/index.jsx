@@ -35,6 +35,7 @@ class App extends React.Component {
       member: '',
       memberExist: false,
       name: '',
+      photoUrl: 'http://graph.facebook.com/100010411231134/picture?type=square',
       sideMenuState: false,
       amount: '',
       sumBill: '',
@@ -70,9 +71,10 @@ class App extends React.Component {
   }
 
   verifyAuthentication(userInfo) {
+    console.log(userInfo.picture);
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
-      username: userInfo.name || 'Guest',
+      username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
       fb_id: userInfo.fb_id || ''
     });
@@ -301,6 +303,8 @@ class App extends React.Component {
             onClick={this.state.sideMenuState ? this.closeMenu : null}
             className={this.state.sideMenuState ? 'site-pusher-on' : 'site-pusher'}>
             <Navbar
+              username={this.state.username}
+              photoUrl={this.state.photoUrl} 
               isAuthenticated={this.state.isAuthenticated}
               handleClickLogout={this.handleClickLogout}
               menuOnClick={this.menuOnClick}
