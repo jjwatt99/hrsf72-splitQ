@@ -237,6 +237,7 @@ const createMemberSummary = (params) => {
 
 const getReceiptsAndTrips = (params) => {
   let database = mysqlConfig.database;
+  //TODO
   if (database = 'gewd') {
     database = '';
   } else if (database = 'heroku_a258462d4ded143') {

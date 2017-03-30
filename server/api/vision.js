@@ -10,8 +10,8 @@ const vision = gcloud.vision;
 const visionClient = vision({
   projectId: 'gewd-161701',
   credentials: {
-    client_email: keys.googleKey,
-    private_key: keys.email
+    client_email: 'makowski.sm@gmail.com',
+    private_key: 'AIzaSyD2n92u_k8M-PQJFAW2bdxqqG1EbQS7s5o'
   }
 });
 
