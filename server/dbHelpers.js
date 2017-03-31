@@ -64,7 +64,19 @@ const queryString = {
                               (SELECT members.id from members \
                               WHERE members.name = ?)\
                               AND trips.name = ?));'
+
 }
+
+const getUsersFromFacebook = (cb) => {
+  db.queryAsync(`SELECT * from members;`, function (err, results){
+    if(err) {
+      cb(err, null);
+    } else {
+      cb(null, results);
+    }
+  })
+};
+
 
 const createNewUser = (userInfo) => {
   db.queryAsync(`SELECT * from members where fb_id = ?`, userInfo.fb_id)
@@ -270,6 +282,7 @@ const getReceiptsAndTrips = (params) => {
 }
 
 module.exports = {
+  getUsersFromFacebook,
   createNewUser,
   createNewTrip,
   addMembersToTrip,

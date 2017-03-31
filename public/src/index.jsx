@@ -32,6 +32,7 @@ class App extends React.Component {
       selectItem: '',
       selectMember: '',
       members: [],
+      usersFromFacebook: [],
       member: '',
       memberExist: false,
       name: '',
@@ -70,6 +71,7 @@ class App extends React.Component {
     this.calculateTotal = this.calculateTotal.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
+    this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
   }
 
   verifyAuthentication(userInfo) {
@@ -152,6 +154,23 @@ class App extends React.Component {
     this.setState({items: itemArray});
   }
 
+  getUsersFromFacebook (){
+    $.ajax({
+      type: 'GET',
+      url: '/getUsersFromFacebook',
+      success: (results) => {
+        console.log('we got da friends from facebook');
+        this.setState({
+          usersFromFacebook: results
+        })
+        console.log(results, '************************')
+      },
+      error: (error) => {
+        console.log('error from updateUsersFromFacebook', error);
+      }
+    });
+  }
+
   addMember (itemArray) {
     this.memberExist(this.state.member, (exist) => {
       this.setState({
@@ -197,7 +216,7 @@ class App extends React.Component {
       }
       if (item[0].name !== '<NOTE>') {
         sum += Number(item[0].amount);
-      } 
+      }
     });
     this.setState({
       sumBill: sum.toFixed(2)
@@ -309,7 +328,7 @@ class App extends React.Component {
               debt={this.state.debt}
               entitlement={this.state.entitlement}
               username={this.state.username}
-              photoUrl={this.state.photoUrl} 
+              photoUrl={this.state.photoUrl}
               isAuthenticated={this.state.isAuthenticated}
               handleClickLogout={this.handleClickLogout}
               menuOnClick={this.menuOnClick}
@@ -401,6 +420,7 @@ class App extends React.Component {
   }
 
   componentWillMount() {
+    this.getUsersFromFacebook();
     this.updateDimensions();
     window.addEventListener('resize', this.updateDimensions.bind(this));
     Util.verify(this.verifyAuthentication);
