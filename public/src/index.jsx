@@ -72,10 +72,10 @@ class App extends React.Component {
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
     this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
+    this.getDebt = this.getDebt.bind(this);
   }
 
   verifyAuthentication(userInfo) {
-    console.log(userInfo);
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
@@ -188,6 +188,29 @@ class App extends React.Component {
 
   componentDidMount() {
     this.getRecentTrip();
+    this.getDebt();
+  }
+
+  getDebt() {
+    console.log('Getting Debt')
+    var context = this;
+
+    $.ajax({
+      type: 'GET',
+      url: '/debt',
+      contentType: 'application/json',
+      success: (results) => {
+        console.log('Results--', results)
+        context.setState({
+          debt: results,
+          entitlement: results
+        })
+      },
+      error: (error) => {
+        console.log('now you fucked up')
+        console.log('error', error);
+      }
+    });
   }
 
   getRecentTrip() {

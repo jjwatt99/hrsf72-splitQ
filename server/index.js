@@ -73,7 +73,7 @@ passport.use(new FacebookStrategy({
       };
       console.log('====================== user name', profile._json, '-----type of', typeof profile)
       console.log(')))((((((()))))))', userInfo)
-      localStorage.user.picture = userInfo.picture
+      // localStorage.user.picture = userInfo.picture
       db.createNewUser(userInfo);
       return cb(null, userInfo);
     });
@@ -129,6 +129,7 @@ app.get('/getUsersFromFacebook', function(req, res) {
     //
 });
 app.get('/login', authHelper, (req, res) => {
+  console.log('wtf1--==\n\n\n\n');
   if (req.isAuthenticated()) {
     res.redirect('/');
   } else {
@@ -156,11 +157,16 @@ app.get('/verify', authHelper, function(req, res) {
   res.send(userInfo);
 });
 
+app.get('/debt', function(req, res) {
+  res.status(200).json(2000);
+})
+
 app.get('*', checkAuthentication, authHelper, (req, res) => {
+  console.log('wtf=======\n\n\n\n\n\n\n');
   if (!req.user) {
     res.redirect('/login');
   } else {
-    res.sendFile(path.resolve(__dirname, '..', 'public', 'dist', 'index.html'));
+    // res.sendFile(path.resolve(__dirname, '..', 'public', 'dist', 'index.html'));
   }
 });
 
@@ -213,6 +219,7 @@ app.post('/upload', function(req, res) {
   });
 });
 
+
 app.post('/upload/delete', function(req, res) {
   //req.body should include receipt name, total, receipt_link;
   //should be a delete query
@@ -245,6 +252,16 @@ app.post('/vision', function(req, res) {
     console.log('Error received in appPost, promisifiedDetectText:', e);
   });
 });
+
+// Get debt for user
+app.post('/recent', (req, res) => {
+  db.getReceiptsAndTrips({adminName: 'Stephen Makowski', tripName: 'lol123'})
+  .then( (results) => {
+    res.send(results);
+  });
+});
+
+
 
 const port = process.env.PORT || 5000;
 app.listen(port, function() {
