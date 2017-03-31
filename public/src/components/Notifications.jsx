@@ -4,109 +4,356 @@ import ReactDOM from 'react-dom';
 class Notifications extends React.Component {
 	constructor(props) {
 		super(props);
-		this.CLIENT_ID = '509436771975-csna0oqrt8o6ahvaq3qkhoduqh38enhj.apps.googleusercontent.com';
-		// Array of API discovery doc URLs for APIs used by the quickstart
-		this.DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
-		// Authorization scopes required by the API; multiple scopes can be
-		// included, separated by spaces.
-		this.SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
-		this.authorizeButton = document.getElementById('authorize-button');
-		this.signoutButton = document.getElementById('signout-button');
+		this.clientId = '833789126437-regurhotkv0bbs64gm61tqb95sdkafcb.apps.googleusercontent.com';
+		this.apiKey = 'AIzaSyBJZhm_-wwF66jU1v6LjICZYp6-0RqkXUo';
+		this.scopes =
+			'https://www.googleapis.com/auth/gmail.readonly '+
+			'https://www.googleapis.com/auth/gmail.send';
+		this.handleClientLoad = this.handleClientLoad.bind(this);
+		this.checkAuth = this.checkAuth.bind(this);
+		this.handleAuthClick = this.handleAuthClick.bind(this);
+		this.handleAuthResult = this.handleAuthResult.bind(this);
+		this.loadGmailApi = this.loadGmailApi.bind(this);
+		this.displayInbox = this.displayInbox.bind(this);
+		this.appendMessageRow = this.appendMessageRow.bind(this);
+		this.sendEmail = this.sendEmail.bind(this);
+		this.composeTidy = this.composeTidy.bind(this);
+		this.sendReply = this.sendReply.bind(this);
+		this.replyTidy = this.replyTidy.bind(this);
+		this.fillInReply = this.fillInReply.bind(this);
+		window.fillInReply = this.fillInReply;
+		this.sendMessage = this.sendMessage.bind(this);
+		this.getHeader = this.getHeader.bind(this);
+		this.getBody = this.getBody.bind(this);
+		this.getHTMLPart = this.getHTMLPart.bind(this);
 	}
-	// /**
-	// *  On load, called to load the auth2 library and API client library.
-	// */
-	// handleClientLoad() {
- //        gapi.load('client:auth2', initClient);
- //    }
 
-	// /**
-	// *  Initializes the API client library and sets up sign-in state
-	// *  listeners.
-	// */
- //    initClient() {
-	// 	gapi.client.init({
-	// 		discoveryDocs: DISCOVERY_DOCS,
-	// 		clientId: CLIENT_ID,
-	// 		scope: SCOPES
- //        }).then(function () {
-	// 		// Listen for sign-in state changes.
-	// 		gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+	componentWillMount() {
+		const gmail_clientScript = document.createElement("script");
+        gmail_clientScript.src = "./gmailClient.js";
+        gmail_clientScript.async = false;
+        gmail_clientScript.onload = this.handleClientLoad;
+        document.body.appendChild(gmail_clientScript);
 
-	// 		// Handle the initial sign-in state.
-	// 		updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-	// 		authorizeButton.onclick = handleAuthClick;
-	// 		signoutButton.onclick = handleSignoutClick;
- //        });
-	// }
+	}
 
-	// /**
-	// *  Called when the signed in status changes, to update the UI
-	// *  appropriately. After a sign-in, the API is called.
-	// */
-	// updateSigninStatus(isSignedIn) {
- //        if (isSignedIn) {
-	// 		authorizeButton.style.display = 'none';
-	// 		signoutButton.style.display = 'block';
-	// 		listLabels();
- //        } else {
-	// 		authorizeButton.style.display = 'block';
-	// 		signoutButton.style.display = 'none';
- //        }
- //    }
+	handleClientLoad() {
+		setTimeout(function() { gapi.client.setApiKey(this.apiKey); }, 300);
+        setTimeout(this.checkAuth, 400);
+	}
 
-	// *
-	// *  Sign in the user upon button click.
+	checkAuth() {
+        gapi.auth.authorize({
+          client_id: this.clientId,
+          scope: this.scopes,
+          immediate: true
+        }, this.handleAuthResult);
+	}
+
+	handleAuthClick() {
+        gapi.auth.authorize({
+          client_id: this.clientId,
+          scope: this.scopes,
+          immediate: false
+        }, this.handleAuthResult);
+        return false;
+	}
+
+	handleAuthResult(authResult) {
+        if(authResult && !authResult.error) {
+          this.loadGmailApi();
+          $('#authorize-button').remove();
+          $('.table-inbox').removeClass("hidden");
+          $('#compose-button').removeClass("hidden");
+        } else {
+          $('#authorize-button').removeClass("hidden");
+          $('#authorize-button').on('click', function(){
+            this.handleAuthClick();
+          });
+        }
+	}
+
+	loadGmailApi() {
+        gapi.client.load('gmail', 'v1', this.displayInbox.bind(this));
+    }
+
+	displayInbox() {
+		var context = this;
+		var request = gapi.client.gmail.users.messages.list({
+          'userId': 'me',
+          'labelIds': 'INBOX',
+          'maxResults': 10
+        });
+        request.execute(function(response) {
+          $.each(response.messages, function() {
+            var messageRequest = gapi.client.gmail.users.messages.get({
+              'userId': 'me',
+              'id': this.id
+            });
+			messageRequest.execute(context.appendMessageRow);
+          });
+        });
+	}
+
+	appendMessageRow(message) {
+		var context = this;
+        $('.table-inbox tbody').append(
+          '<tr>\
+            <td>'+this.getHeader(message.payload.headers, 'From')+'</td>\
+            <td>\
+              <a href="#message-modal-' + message.id +
+                '" data-toggle="modal" id="message-link-' + message.id+'">' +
+                this.getHeader(message.payload.headers, 'Subject') +
+              '</a>\
+            </td>\
+            <td>'+this.getHeader(message.payload.headers, 'Date')+'</td>\
+          </tr>'
+        );
+        var reply_to = (this.getHeader(message.payload.headers, 'Reply-to') !== '' ?
+          this.getHeader(message.payload.headers, 'Reply-to') :
+          this.getHeader(message.payload.headers, 'From')).replace(/\"/g, '&quot;');
+
+        var reply_subject = 'Re: '+this.getHeader(message.payload.headers, 'Subject').replace(/\"/g, '&quot;');
+        $('body').append(
+          '<div class="modal fade" id="message-modal-' + message.id +
+              '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
+            <div class="modal-dialog modal-lg">\
+              <div class="modal-content">\
+                <div class="modal-header">\
+                  <button type="button"\
+                          class="close"\
+                          data-dismiss="modal"\
+                          aria-label="Close">\
+                    <span aria-hidden="true">&times;</span></button>\
+                  <h4 class="modal-title" id="myModalLabel">' +
+                    this.getHeader(message.payload.headers, 'Subject') +
+                  '</h4>\
+                </div>\
+                <div class="modal-body">\
+                  <iframe id="message-iframe-'+message.id+'" srcdoc="<p>Loading...</p>">\
+                  </iframe>\
+                </div>\
+                <div class="modal-footer">\
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>\
+                  <button type="button" class="btn btn-primary reply-button" data-dismiss="modal" data-toggle="modal" data-target="#reply-modal"\
+                  onclick="window.fillInReply(\
+                    \''+reply_to+'\', \
+                    \''+reply_subject+'\', \
+                    \''+this.getHeader(message.payload.headers, 'Message-ID')+'\'\
+                    );"\
+                  >Reply</button>\
+                </div>\
+              </div>\
+            </div>\
+          </div>'
+        );
+        $('#message-link-'+message.id).on('click', function(){
+          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $('body', ifrm).html(context.getBody(message.payload));
+        });
+	}
+
+	sendEmail() {
+		$('#send-button').addClass('disabled');
+		this.sendMessage(
+		  {
+		    'To': $('#compose-to').val(),
+		    'Subject': $('#compose-subject').val()
+		  },
+		  $('#compose-message').val(),
+		  this.composeTidy
+		);
+		// return false;
+	}
+
+	composeTidy() {
+        $('#compose-modal').modal('hide');
+
+        $('#compose-to').val('');
+        $('#compose-subject').val('');
+        $('#compose-message').val('');
+
+        $('#send-button').removeClass('disabled');
+	}
+
+	sendReply() {
+        $('#reply-button').addClass('disabled');
+
+        this.sendMessage(
+          {
+            'To': $('#reply-to').val(),
+            'Subject': $('#reply-subject').val(),
+            'In-Reply-To': $('#reply-message-id').val()
+          },
+          $('#reply-message').val(),
+          this.replyTidy
+        );
+
+        // return false;
+	}
+
+	replyTidy() {
+        $('#reply-modal').modal('hide');
+
+        $('#reply-message').val('');
+
+        $('#reply-button').removeClass('disabled');
+	}
+
+	fillInReply(to, subject, message_id) {
+        $('#reply-to').val(to);
+        $('#reply-subject').val(subject);
+        $('#reply-message-id').val(message_id);
+    }
+
+	sendMessage(headers_obj, message, callback) {
+        var email = '';
+
+        for(var header in headers_obj)
+          email += header += ": "+headers_obj[header]+"\r\n";
+
+        email += "\r\n" + message;
+
+        var sendRequest = gapi.client.gmail.users.messages.send({
+          'userId': 'me',
+          'resource': {
+            'raw': window.btoa(email).replace(/\+/g, '-').replace(/\//g, '_')
+          }
+        });
+
+        return sendRequest.execute(callback);
+	}
 	
-	// handleAuthClick(event) {
- //        gapi.auth2.getAuthInstance().signIn();
-	// }
+	getHeader(headers, index) {
+        var header = '';
+        $.each(headers, function(){
+          if(this.name.toLowerCase() === index.toLowerCase()){
+            header = this.value;
+          }
+        });
+        return header;
+	}
 
-	// /**
-	// *  Sign out the user upon button click.
-	// */
-	// handleSignoutClick(event) {
- //        gapi.auth2.getAuthInstance().signOut();
-	// }
 
-	// /**
-	// * Append a pre element to the body containing the given message
-	// * as its text node. Used to display the results of the API call.
-	// *
-	// * @param {string} message Text to be placed in pre element.
-	// */
-	// appendPre(message) {
- //        var pre = document.getElementById('content');
- //        var textContent = document.createTextNode(message + '\n');
- //        pre.appendChild(textContent);
-	// }
+	getBody(message) {
+        var encodedBody = '';
+        if(typeof message.parts === 'undefined')
+        {
+          encodedBody = message.body.data;
+        }
+        else
+        {
+          encodedBody = this.getHTMLPart(message.parts);
+        }
+        encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+        return decodeURIComponent(escape(window.atob(encodedBody)));
+	}
 
-	// /**
-	// * Print all Labels in the authorized user's inbox. If no labels
-	// * are found an appropriate message is printed.
-	// */
-	// listLabels() {
- //        gapi.client.gmail.users.labels.list({
-	// 		'userId': 'me'
- //        }).then(function(response) {
-	// 	var labels = response.result.labels;
-	// 	appendPre('Labels:');
-
-	// 	if (labels && labels.length > 0) {
- //            for (i = 0; i < labels.length; i++) {
- //              var label = labels[i];
- //              appendPre(label.name)
- //            }
-	// 	} else {
- //            appendPre('No Labels found.');
-	// 		}
- //        });
-	// }
+	getHTMLPart(arr) {
+        for(var x = 0; x <= arr.length; x++)
+        {
+          if(typeof arr[x].parts === 'undefined')
+          {
+            if(arr[x].mimeType === 'text/html')
+            {
+              return arr[x].body.data;
+            }
+          }
+          else
+          {
+            return this.getHTMLPart(arr[x].parts);
+          }
+        }
+        return '';
+	}
 
 	render() {
 		return (
 			<div>
-			 <h1>Notifications</h1>
+				<div className="container">
+			 		<h1>Notifications</h1>
+
+			      <a href="#compose-modal" data-toggle="modal" id="compose-button" className="btn btn-primary pull-right hidden">Compose</a>
+
+			      <button id="authorize-button" className="btn btn-primary hidden">Authorize</button>
+
+			      <table className="table table-striped table-inbox hidden">
+			        <thead>
+			          <tr>
+			            <th>From</th>
+			            <th>Subject</th>
+			            <th>Date/Time</th>
+			          </tr>
+			        </thead>
+			        <tbody></tbody>
+			      </table>
+			    </div>
+
+			    <div className="modal fade" id="compose-modal" tabIndex="-1" role="dialog">
+			      <div className="modal-dialog modal-lg">
+			        <div className="modal-content">
+			          <div className="modal-header">
+			            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+			              <span aria-hidden="true">&times;</span>
+			            </button>
+			            <h4 className="modal-title">Compose</h4>
+			          </div>
+			          <form onSubmit={this.sendEmail}>
+			            <div className="modal-body">
+			              <div className="form-group">
+			                <input type="email" className="form-control" id="compose-to" placeholder="To" required />
+			              </div>
+
+			              <div className="form-group">
+			                <input type="text" className="form-control" id="compose-subject" placeholder="Subject" required />
+			              </div>
+
+			              <div className="form-group">
+			                <textarea className="form-control" id="compose-message" placeholder="Message" rows="10" required></textarea>
+			              </div>
+			            </div>
+			            <div className="modal-footer">
+			              <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+			              <button type="submit" id="send-button" className="btn btn-primary">Send</button>
+			            </div>
+			          </form>
+			        </div>
+			      </div>
+			    </div>
+
+			    <div className="modal fade" id="reply-modal" tabIndex="-1" role="dialog">
+			      <div className="modal-dialog modal-lg">
+			        <div className="modal-content">
+			          <div className="modal-header">
+			            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+			              <span aria-hidden="true">&times;</span>
+			            </button>
+			            <h4 className="modal-title">Reply</h4>
+			          </div>
+			          <form onSubmit={this.sendReply}>
+			            <input type="hidden" id="reply-message-id" />
+
+			            <div className="modal-body">
+			              <div className="form-group">
+			                <input type="text" className="form-control" id="reply-to" disabled />
+			              </div>
+
+			              <div className="form-group">
+			                <input type="text" className="form-control disabled" id="reply-subject" disabled />
+			              </div>
+
+			              <div className="form-group">
+			                <textarea className="form-control" id="reply-message" placeholder="Message" rows="10" required></textarea>
+			              </div>
+			            </div>
+			            <div className="modal-footer">
+			              <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+			              <button type="submit" id="reply-button" className="btn btn-primary">Send</button>
+			            </div>
+			          </form>
+			        </div>
+			      </div>
+			    </div>
 			</div>
 
 		)
