@@ -115,6 +115,17 @@ app.get('/addReceipt', db.addReceipt);
 app.get('/storeItems', db.storeReceiptItems);
 // app.get('/assignItems', db.assignItemsToMembers);
 
+app.get('/getUsersFromFacebook', function(req, res) {
+    console.log('received req');
+    db.getUsersFromFacebook( function(err, results){
+      if(err) {
+        res.sendStatus(500);
+      } else {
+        res.send(results);
+      }
+    })
+    //
+});
 app.get('/login', authHelper, (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect('/');

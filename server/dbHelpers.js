@@ -64,7 +64,19 @@ const queryString = {
                               (SELECT members.id from members \
                               WHERE members.name = ?)\
                               AND trips.name = ?));'
+
 }
+
+const getUsersFromFacebook = (cb) => {
+  db.queryAsync(`SELECT * from members;`, function (err, results){
+    if(err) {
+      cb(err, null);
+    } else {
+      cb(null, results);
+    }
+  })
+};
+
 
 const createNewUser = (userInfo) => {
   db.queryAsync(`SELECT * from members where fb_id = ?`, userInfo.fb_id)
@@ -233,10 +245,12 @@ const createMemberSummary = (params) => {
   })
   .catch( err => console.error('ERROR: createMemberSummary', err));
 }
+//
 
 
 const getReceiptsAndTrips = (params) => {
   let database = mysqlConfig.database;
+  //TODO
   if (database = 'gewd') {
     database = '';
   } else if (database = 'heroku_a258462d4ded143') {
@@ -269,6 +283,7 @@ const getReceiptsAndTrips = (params) => {
 }
 
 module.exports = {
+  getUsersFromFacebook,
   createNewUser,
   createNewTrip,
   addMembersToTrip,
