@@ -14,7 +14,7 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import PrivateRouteHome from './components/PrivateRouteHome.jsx';
 import Util from './lib/util.js';
 import CreateItem from './components/CreateItem.jsx';
-import Notifications from './components/Notifications.jsx'
+import Notifications from './components/Notifications.jsx';
 import $ from 'jquery';
 
 
@@ -32,10 +32,11 @@ class App extends React.Component {
       selectItem: '',
       selectMember: '',
       members: [],
+      usersFromFacebook: [],
       member: '',
       memberExist: false,
       name: '',
-      photoUrl: 'http://graph.facebook.com/100010411231134/picture?type=square',
+      photoUrl: '',
       sideMenuState: false,
       amount: '',
       sumBill: '',
@@ -46,6 +47,8 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
+      entitlement: null,
+      debt: null,
       recent: [ {name: 'No trips yet. Now create one!'}]
     };
 
@@ -68,15 +71,17 @@ class App extends React.Component {
     this.calculateTotal = this.calculateTotal.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
+    this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
   }
 
   verifyAuthentication(userInfo) {
-    console.log(userInfo.picture);
+    console.log(userInfo);
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
-      fb_id: userInfo.fb_id || ''
+      fb_id: userInfo.fb_id || '',
+      photoUrl: userInfo.picture
     });
   }
 
@@ -149,6 +154,23 @@ class App extends React.Component {
     this.setState({items: itemArray});
   }
 
+  getUsersFromFacebook (){
+    $.ajax({
+      type: 'GET',
+      url: '/getUsersFromFacebook',
+      success: (results) => {
+        console.log('we got da friends from facebook');
+        this.setState({
+          usersFromFacebook: results
+        })
+        console.log(results, '************************')
+      },
+      error: (error) => {
+        console.log('error from updateUsersFromFacebook', error);
+      }
+    });
+  }
+
   addMember (itemArray) {
     this.memberExist(this.state.member, (exist) => {
       this.setState({
@@ -194,7 +216,7 @@ class App extends React.Component {
       }
       if (item[0].name !== '<NOTE>') {
         sum += Number(item[0].amount);
-      } 
+      }
     });
     this.setState({
       sumBill: sum.toFixed(2)
@@ -303,8 +325,10 @@ class App extends React.Component {
             onClick={this.state.sideMenuState ? this.closeMenu : null}
             className={this.state.sideMenuState ? 'site-pusher-on' : 'site-pusher'}>
             <Navbar
+              debt={this.state.debt}
+              entitlement={this.state.entitlement}
               username={this.state.username}
-              photoUrl={this.state.photoUrl} 
+              photoUrl={this.state.photoUrl}
               isAuthenticated={this.state.isAuthenticated}
               handleClickLogout={this.handleClickLogout}
               menuOnClick={this.menuOnClick}
@@ -396,6 +420,7 @@ class App extends React.Component {
   }
 
   componentWillMount() {
+    this.getUsersFromFacebook();
     this.updateDimensions();
     window.addEventListener('resize', this.updateDimensions.bind(this));
     Util.verify(this.verifyAuthentication);

@@ -71,6 +71,7 @@ passport.use(new FacebookStrategy({
       };
       console.log('====================== user name', profile._json, '-----type of', typeof profile)
       console.log(')))((((((()))))))', userInfo)
+      localStorage.user.picture = userInfo.picture
       db.createNewUser(userInfo);
       return cb(null, userInfo);
     });
@@ -114,6 +115,17 @@ app.get('/addReceipt', db.addReceipt);
 app.get('/storeItems', db.storeReceiptItems);
 // app.get('/assignItems', db.assignItemsToMembers);
 
+app.get('/getUsersFromFacebook', function(req, res) {
+    console.log('received req');
+    db.getUsersFromFacebook( function(err, results){
+      if(err) {
+        res.sendStatus(500);
+      } else {
+        res.send(results);
+      }
+    })
+    //
+});
 app.get('/login', authHelper, (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect('/');
@@ -136,7 +148,8 @@ app.get('/verify', authHelper, function(req, res) {
   let userInfo = {
     isAuthenitcated: localStorage.isAuthenitcated,
     name: localStorage.user.name,
-    fb_id: localStorage.user.fb_id
+    fb_id: localStorage.user.fb_id,
+    picture: localStorage.user.picture
   };
   res.send(userInfo);
 });
