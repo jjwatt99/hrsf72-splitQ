@@ -127,7 +127,6 @@ app.get('/getUsersFromFacebook', function(req, res) {
         res.send(results);
       }
     })
-    //
 });
 app.get('/login', authHelper, (req, res) => {
   console.log('wtf1--==\n\n\n\n');

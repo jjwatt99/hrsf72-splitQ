@@ -242,10 +242,12 @@ class App extends React.Component {
       type: 'GET',
       url: '/getUsersFromFacebook',
       success: (results) => {
+        this.setState({
+          usersFromFacebook: results
+        })
         context.setState({
           usersFromFacebook: results
         })
-        console.log(context.state.usersFromFacebook, '************************')
       },
       error: (error) => {
         console.log('error from updateUsersFromFacebook', error);
