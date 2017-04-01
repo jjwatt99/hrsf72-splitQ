@@ -5,6 +5,7 @@ import AddMember from './AddMember.jsx';
 import {Link} from 'react-router-dom';
 
 const Itemization = ({users, addItem, itemName, itemAmount, items, selectItem, deleteItem, selectMember, addMember, member, members, onInputChange, windowHeight, memberExist, itemOnClick, memberOnClick, initialMemberSelect,sumTax,sumTip,calculateTotal}) => {
+
   {console.log('item members', members)}
   return (
     <div className='itemization-page'>

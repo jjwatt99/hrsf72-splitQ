@@ -170,8 +170,6 @@ class App extends React.Component {
   }
 
   verifyAuthentication(userInfo) {
-    console.log('verify members 1', this.state.members);
-    console.log('userInfo', userInfo.name);
     var temp = this.state.members;
     if (userInfo.name !== undefined) {
       temp.push([userInfo.name]);
