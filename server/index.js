@@ -168,6 +168,7 @@ app.get('/testing', function(req, res) {
 });
 
 //To be used for testing and seeing requests
+//
 app.post('/createTripName', function(req, res) {
   //With the received request, use model function to submit the tripname to the database
 

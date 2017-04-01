@@ -296,6 +296,7 @@ class App extends React.Component {
   memberOnClick(member) {
     this.setState({
       selectMember: member
+        //
     });
   }
 
