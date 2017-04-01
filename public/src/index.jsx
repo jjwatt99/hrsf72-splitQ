@@ -36,6 +36,7 @@ class App extends React.Component {
       member: '',
       memberExist: false,
       name: '',
+      email: '',
       photoUrl: '',
       sideMenuState: false,
       amount: '',
@@ -47,9 +48,10 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
-      entitlement: null,
-      debt: null,
-      recent: [ {name: 'No trips yet. Now create one!'}]
+      entitlement: 0,
+      debt: 0,
+      recent: [ {name: 'No trips yet. Now create one!'}],
+      flatObjs: []
     };
 
     this.verifyAuthentication = this.verifyAuthentication.bind(this);
@@ -72,16 +74,96 @@ class App extends React.Component {
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
     this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
+    this.getDebt = this.getDebt.bind(this);
+    this.getEntitlement = this.getEntitlement.bind(this);
+    this.logState = this.logState.bind(this);
+    this.createFlatObjs = this.createFlatObjs.bind(this);
+  }
+
+  logState() {
+    var app = this;
+    console.log('CURRENT STATE: ', app.state);
+  }
+
+  createFlatObjs() {
+    var items = [];
+    // go through items and do the stuff below
+    var app = this;
+    var date = new Date();
+    var day = date.getDay();
+    var month = date.getMonth();
+    var year = date.getFullYear();
+    if (app.state.items.length < 1) {
+      //do nothing
+    } else {
+      let tipObj = {};
+      tipObj.username = app.state.username; 
+      tipObj.email = app.state.email;
+      tipObj.tripName = app.state.tripName;
+      tipObj.receiptName = app.state.receiptName;
+      tipObj.itemAmount = app.state.sumTip;
+      tipObj.itemName = 'tip'
+      tipObj.debtor = app.state.username;
+      tipObj.noticeType = 'none';
+      tipObj.noticesSent = 0;
+      tipObj.dateOfDebt = `${month}/${day}/${year}`;
+      items.push(tipObj);
+      var itemList = app.state.items;
+
+      for (var i = 0; i < itemList.length; i++) {
+        let item = itemList[i];
+
+        if (item[0].members.length === 0) {
+          let obj = {};
+          obj.username = app.state.username; 
+          obj.email = app.state.email;
+          obj.tripName = app.state.tripName;
+          obj.receiptName = app.state.receiptName;
+          obj.itemAmount = item[0].amount;
+          obj.itemName = item[0].name;
+          // default to username
+          obj.debtor = app.state.username;
+          obj.noticeType = 'none';
+          obj.noticesSent = 0;
+          obj.dateOfDebt = `${month}/${day}/${year}`;
+
+
+
+          items.push(obj);
+        } else {
+          for (var j = 0; j < item[0].members.length; j++) {  
+            let obj = {};
+            obj.username = app.state.username; 
+            obj.email = app.state.email;
+            obj.tripName = app.state.tripName;
+            obj.receiptName = app.state.receiptName;
+            obj.itemAmount = item[0].amount / item[0].members.length
+            obj.itemName = item[0].name;
+            obj.debtor = item[0].members[j];
+            obj.noticeType = 'none';
+            obj.noticesSent = 0;
+            obj.dateOfDebt = `${month}/${day}/${year}`;
+
+
+            items.push(obj);
+          }
+        }
+      }
+    }
+
+    
+    console.log('FLAT OBJS ARR is currently', items);
+    return items;
   }
 
   verifyAuthentication(userInfo) {
-    console.log(userInfo);
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
       fb_id: userInfo.fb_id || '',
-      photoUrl: userInfo.picture
+      photoUrl: userInfo.picture,
+      email: userInfo.email || '',
     });
   }
 
@@ -185,9 +267,58 @@ class App extends React.Component {
     this.state.member = '';
   }
 
-
   componentDidMount() {
     this.getRecentTrip();
+    this.getDebt();
+    this.getEntitlement();
+  }
+
+  getDebt() {
+    console.log('Getting Debt')
+    var context = this;
+
+    $.ajax({
+      type: 'GET',
+      url: '/debt',
+      contentType: 'application/json',
+      success: (results) => {
+        // console.log('debt', results)
+        // if (results.length === 0) {
+        //   context.setState({
+        //     debt: 'unavailable'
+        //   })
+        // } else {
+        //   context.setState({
+        //     debt: 'unavailable'
+        //   })
+        // }
+      },
+      error: (error) => {
+        console.log('now you messed up')
+        console.log('error', error);
+      }
+    });
+  }
+
+  getEntitlement() {
+    console.log('Getting Debt')
+    var context = this;
+
+    $.ajax({
+      type: 'GET',
+      url: '/entitlement',
+      contentType: 'application/json',
+      success: (results) => {
+        // console.log('entitlement', results)
+        // context.setState({
+        //   entitlement: 'unaailable';
+        // })
+      },
+      error: (error) => {
+        console.log('you have an error')
+        console.log('error', error);
+      }
+    });
   }
 
   getRecentTrip() {
@@ -231,6 +362,7 @@ class App extends React.Component {
   }
 
   calculateMemberSum() {
+    var context = this;
     var memberSum = {};
     var currentScope = this;
     this.state.items.forEach(function(itemArr) {
@@ -249,8 +381,13 @@ class App extends React.Component {
         }
       }
     });
+
     console.log('memberSum = ', memberSum)
+
+    console.log(memberSum);
+
     this.setState({memberSum: memberSum});
+    this.setState({entitlement: context.state.entitlement + memberSum})
   }
 
 
@@ -420,6 +557,11 @@ class App extends React.Component {
         </Router>
       </div>
     );
+  }
+
+  componentDidUpdate(){
+    // this.logState();
+    this.createFlatObjs();
   }
 
   componentWillMount() {

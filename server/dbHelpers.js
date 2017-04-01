@@ -247,6 +247,16 @@ const createMemberSummary = (params) => {
 }
 //
 
+const getAllReceipts = (cb) => {
+  db.query('SELECT * FROM members', function(err, results) {
+    if (err) {
+      cb(err, null);
+    } else {
+      cb(null, results);
+    }
+  });
+}
+
 
 const getReceiptsAndTrips = (params) => {
   let database = mysqlConfig.database;
@@ -283,6 +293,7 @@ const getReceiptsAndTrips = (params) => {
 }
 
 module.exports = {
+  getAllReceipts,
   getUsersFromFacebook,
   createNewUser,
   createNewTrip,
