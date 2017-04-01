@@ -24,7 +24,11 @@ class AddMember extends React.Component {
             {console.log('this is da usersssss', this.props.users)}
             {this.props.users.map((user, index) => {
               return (
-                  <div key = {index} className ='receipt-members-bar-mem selectMember'>
+                  <div
+                    key = {index} className ='receipt-members-bar-mem selectMember'
+                    onClick={() => this.props.memberOnClick(user)}
+                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member[0] ? 'Selected' : '')}
+                  >
                     <img className= 'usersImageAtTheBottom' src={user.picture}></img>
                     <h4>{user.firstName} </h4>
                   </div>
