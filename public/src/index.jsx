@@ -89,21 +89,26 @@ class App extends React.Component {
     var items = [];
     // go through items and do the stuff below
     var app = this;
+    var date = new Date();
+    var day = date.getDay();
+    var month = date.getMonth();
+    var year = date.getYear();
     if (app.state.items.length < 1) {
       //do nothing
     } else {
-    let tipObj = {};
-    tipObj.username = app.state.username; 
-    tipObj.email = app.state.email;
-    tipObj.tripName = app.state.tripName;
-    tipObj.receiptName = app.state.receiptName;
-    tipObj.itemAmount = app.state.sumTip;
-    tipObj.itemName = 'tip'
-    tipObj.debtor = app.state.username;
-
-    items.push(tipObj);
-      var itemList = app.state.items;
+      let tipObj = {};
+      tipObj.username = app.state.username; 
+      tipObj.email = app.state.email;
+      tipObj.tripName = app.state.tripName;
+      tipObj.receiptName = app.state.receiptName;
+      tipObj.itemAmount = app.state.sumTip;
+      tipObj.itemName = 'tip'
+      tipObj.debtor = app.state.username;
+      tipObj.noticeType = 'none';
+      tipObj.noticesSent = 0;
+      tipObj.dateOfDebt = `${month}/${day}/${year[1]}${year[2]}`;
       items.push(tipObj);
+      var itemList = app.state.items;
 
       for (var i = 0; i < itemList.length; i++) {
         let item = itemList[i];
@@ -118,6 +123,11 @@ class App extends React.Component {
           obj.itemName = item[0].name;
           // default to username
           obj.debtor = app.state.username;
+          obj.noticeType = 'none';
+          obj.noticesSent = 0;
+          obj.dateOfDebt = `${month}/${day}/${year[1]}${year[2]}`;
+
+
 
           items.push(obj);
         } else {
@@ -130,6 +140,10 @@ class App extends React.Component {
             obj.itemAmount = item[0].amount / item[0].members.length
             obj.itemName = item[0].name;
             obj.debtor = item[0].members[j];
+            obj.noticeType = 'none';
+            obj.noticesSent = 0;
+            obj.dateOfDebt = `${month}/${day}/${year.toString()[1]}${year.toString()[2]}`;
+
 
             items.push(obj);
           }
