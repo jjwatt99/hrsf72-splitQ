@@ -2,6 +2,7 @@ module.exports = {
   members: 'CREATE TABLE IF NOT EXISTS members (\
       id            int NOT NULL AUTO_INCREMENT,\
       fb_id          varchar(100) NOT NULL DEFAULT \'Payee\',\
+      name          varchar(50) NOT NULL, \
       firstName          varchar(50) NOT NULL,\
       lastName          varchar(50) NOT NULL,\
       email          varchar(50) NOT NULL DEFAULT \'Payee\',\

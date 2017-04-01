@@ -63,6 +63,7 @@ passport.use(new FacebookStrategy({
   function(accessToken, refreshToken, profile, cb) {
     process.nextTick(function () {
       let userInfo = {
+        name: profile._json.first_name + " " + profile._json.last_name,
         firstName: profile._json.first_name,
         lastName: profile._json.last_name,
         fb_id: profile._json.id,
