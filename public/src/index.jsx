@@ -155,15 +155,17 @@ class App extends React.Component {
   }
 
   getUsersFromFacebook (){
+    var context = this;
     $.ajax({
       type: 'GET',
       url: '/getUsersFromFacebook',
       success: (results) => {
-        console.log('we got da friends from facebook');
         this.setState({
           usersFromFacebook: results
         })
-        console.log(results, '************************')
+        context.setState({
+          usersFromFacebook: results
+        })
       },
       error: (error) => {
         console.log('error from updateUsersFromFacebook', error);
@@ -249,6 +251,7 @@ class App extends React.Component {
         }
       }
     });
+    console.log('memberSum = ', memberSum)
     this.setState({memberSum: memberSum});
   }
 
@@ -296,6 +299,7 @@ class App extends React.Component {
   memberOnClick(member) {
     this.setState({
       selectMember: member
+        //
     });
   }
 
@@ -372,6 +376,7 @@ class App extends React.Component {
               deleteItem={this.deleteItem}
               members={this.state.members}
               member={this.state.member}
+              users={this.state.usersFromFacebook}
               sumBill={this.state.sumBill}
               sumTax={this.state.sumTax}
               sumTaxTip={this.state.sumTaxTip}

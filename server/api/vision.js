@@ -8,7 +8,7 @@ const keys = require('../../public/config.js');
 //Google-cloud mod setup
 const vision = gcloud.vision;
 const visionClient = vision({
-  projectId: 'gewd-161701',
+  projectId: 'splitq-162923',
   credentials: {
     client_email: 'makowski.sm@gmail.com',
     private_key: 'AIzaSyD2n92u_k8M-PQJFAW2bdxqqG1EbQS7s5o'

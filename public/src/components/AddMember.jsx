@@ -8,6 +8,8 @@ class AddMember extends React.Component {
 
   componentWillMount() {
     this.props.initialMemberSelect();
+    console.log('this is users', this.props.users)
+    console.log('this is member', this.props.member)
   }
 
   render() {
@@ -17,7 +19,23 @@ class AddMember extends React.Component {
         {this.props.memberExist ? <p>The name already exist!</p> : null}
         <div className='receipt-members-bar-outer-container'>
           <div className='receipt-members-bar-inner-container'>
-            <div className='receipt-add-members'>
+            <div>
+            <div className = 'whatever'>
+            {console.log('this is da usersssss', this.props.users)}
+            {this.props.users.map((user, index) => {
+              return (
+                  <div
+                    key = {index}
+                    onClick={() => this.props.memberOnClick(user.firstName)}
+                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === user ? 'Selected' : '')}
+                  >
+                    <img className= 'usersImageAtTheBottom' src={user.picture}></img>
+                    <h4>{user.firstName} </h4>
+                  </div>
+                  )
+            })
+            }
+            </div>
               <input
                 placeholder='Name'
                 name='member'
@@ -32,14 +50,15 @@ class AddMember extends React.Component {
               ></a>
             </div>
             <div className='receipt-members-list'>
-              {this.props.members.map((member, index) => {
+              {this.props.users.map((member, index) => {
+                {console.log('this is members------', member)}
                 return (
                   <div
                     key={index}
-                    onClick={() => this.props.memberOnClick(member[0])}
-                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member[0] ? 'Selected' : '')}
+                    onClick={() => this.props.memberOnClick(member.firstName)}
+                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member ? 'Selected' : '')}
                   >
-                  <span className='receipt-members-bar-mem-name'>{member[0]}</span>
+                  <span className='receipt-members-bar-mem-name'>{member.firstName}</span>
                   </div>
                 )
               })}
@@ -48,8 +67,8 @@ class AddMember extends React.Component {
         </div>
       </div>
     )
-
   }
 }
 
 export default AddMember;
+//
