@@ -63,7 +63,8 @@ passport.use(new FacebookStrategy({
   function(accessToken, refreshToken, profile, cb) {
     process.nextTick(function () {
       let userInfo = {
-        name: profile._json.first_name + ' ' + profile._json.last_name,
+        firstName: profile._json.first_name,
+        lastName: profile._json.last_name,
         fb_id: profile._json.id,
         token: accessToken,
         email: profile._json.email,
@@ -167,6 +168,7 @@ app.get('/testing', function(req, res) {
 });
 
 //To be used for testing and seeing requests
+//
 app.post('/createTripName', function(req, res) {
   //With the received request, use model function to submit the tripname to the database
 

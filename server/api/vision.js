@@ -10,8 +10,8 @@ const vision = gcloud.vision;
 const visionClient = vision({
   projectId: 'splitq-162923',
   credentials: {
-    client_email: keys.email,
-    private_key: keys.googleKey
+    client_email:keys.email,
+    private_key:  keys.googleKey
   }
 });
 
