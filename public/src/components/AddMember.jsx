@@ -46,6 +46,7 @@ class AddMember extends React.Component {
               />
               <a
                 onClick={this.props.addMember}
+                onKeyPress={this.props.addMember}
                 className='btn-circle'
               ></a>
             </div>

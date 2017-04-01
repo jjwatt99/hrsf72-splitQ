@@ -24,13 +24,13 @@ class NotificationsForm extends React.Component {
 			Frequency: t.list(frequency),
 			Body: t.String
 		});
-		const value = {	
+		const value = {
 			Body: 'Pay me'
 		}
 
 		const options = {
 			legend: <i>Add Automated Notice</i>,
-			fields: {	
+			fields: {
 				EmailList: {
 					label: <i>Emails in Database</i>,
 					factory: t.form.Select
