@@ -25,8 +25,8 @@ class AddMember extends React.Component {
             {this.props.users.map((user, index) => {
               return (
                   <div
-                    key = {index} className ='receipt-members-bar-mem selectMember'
-                    onClick={() => this.props.memberOnClick(user)}
+                    key = {index}
+                    onClick={() => this.props.memberOnClick(user.firstName)}
                     className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === user ? 'Selected' : '')}
                   >
                     <img className= 'usersImageAtTheBottom' src={user.picture}></img>
@@ -46,19 +46,19 @@ class AddMember extends React.Component {
               />
               <a
                 onClick={this.props.addMember}
-                onKeyPress={this.props.addMember}
                 className='btn-circle'
               ></a>
             </div>
             <div className='receipt-members-list'>
-              {this.props.members.map((member, index) => {
+              {this.props.users.map((member, index) => {
+                {console.log('this is members------', member)}
                 return (
                   <div
                     key={index}
-                    onClick={() => this.props.memberOnClick(member[0])}
-                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member[0] ? 'Selected' : '')}
+                    onClick={() => this.props.memberOnClick(member.firstName)}
+                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member ? 'Selected' : '')}
                   >
-                  <span className='receipt-members-bar-mem-name'>{member[0]}</span>
+                  <span className='receipt-members-bar-mem-name'>{member.firstName}</span>
                   </div>
                 )
               })}
