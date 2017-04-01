@@ -223,7 +223,7 @@ var createMemberSummary = (params) => {
 
 
   function test() {
-    for (var i = 1; i < memArray.length; i++) {
+    for (var i = 0; i < memArray.length; i++) {
       db.queryAsync('INSERT INTO members (name) select * from (select \'' + memArray[i][0] + '\') as tmp\
         where not exists (select name from members where name = \'' + memArray[i][0] + '\') limit 1');
     }
