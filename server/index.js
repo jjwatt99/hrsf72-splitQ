@@ -157,8 +157,13 @@ app.get('/verify', authHelper, function(req, res) {
   res.send(userInfo);
 });
 
+/// Get debt nand entitlement
 app.get('/debt', function(req, res) {
   res.status(200).json(2000);
+})
+
+app.get('/entitlement', function(req, res) {
+  res.status(200).json(1000);
 })
 
 app.get('*', checkAuthentication, authHelper, (req, res) => {

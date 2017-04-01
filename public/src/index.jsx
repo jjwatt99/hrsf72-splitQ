@@ -73,6 +73,7 @@ class App extends React.Component {
     this.getRecentTrip = this.getRecentTrip.bind(this);
     this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
     this.getDebt = this.getDebt.bind(this);
+    this.getEntitlement = this.getEntitlement.bind(this);
   }
 
   verifyAuthentication(userInfo) {
@@ -189,6 +190,7 @@ class App extends React.Component {
   componentDidMount() {
     this.getRecentTrip();
     this.getDebt();
+    this.getEntitlement();
   }
 
   getDebt() {
@@ -200,9 +202,29 @@ class App extends React.Component {
       url: '/debt',
       contentType: 'application/json',
       success: (results) => {
-        console.log('Results--', results)
+        console.log('debt', results)
         context.setState({
-          debt: results,
+          debt: results
+        })
+      },
+      error: (error) => {
+        console.log('now you fucked up')
+        console.log('error', error);
+      }
+    });
+  }
+
+  getEntitlement() {
+    console.log('Getting Debt')
+    var context = this;
+
+    $.ajax({
+      type: 'GET',
+      url: '/entitlement',
+      contentType: 'application/json',
+      success: (results) => {
+        console.log('entitlement', results)
+        context.setState({
           entitlement: results
         })
       },
