@@ -50,7 +50,8 @@ class App extends React.Component {
       windowHeight: '',
       entitlement: 0,
       debt: 0,
-      recent: [ {name: 'No trips yet. Now create one!'}]
+      recent: [ {name: 'No trips yet. Now create one!'}],
+      flatObjs: []
     };
 
     this.verifyAuthentication = this.verifyAuthentication.bind(this);
@@ -76,6 +77,7 @@ class App extends React.Component {
     this.getDebt = this.getDebt.bind(this);
     this.getEntitlement = this.getEntitlement.bind(this);
     this.logState = this.logState.bind(this);
+    this.createFlatObjs = this.createFlatObjs.bind(this);
   }
 
   logState() {
@@ -83,16 +85,61 @@ class App extends React.Component {
     console.log('CURRENT STATE: ', app.state);
   }
 
-  createFlatObj() {
+  createFlatObjs() {
+    var items = [];
+    // go through items and do the stuff below
     var app = this;
-    var obj = {};
-    obj.username = app.state.username; 
-    obj.email = app.state.email;
-    obj.tripName = app.state.tripName;
-    obj.receiptName = app.state.receiptName;
+    if (app.state.items.length < 1) {
+      console.log('NO ITEMS ADDED YET');
+    } else {
+      var itemList = app.state.items;
 
-    console.log('FLAT OBJ is currently', obj);
-    return obj;
+      for (var i = 0; i < itemList.length; i++) {
+        let item = itemList[i];
+
+        if (item[0].members.length === 0) {
+          console.log('CURRENT ITEM NO MEMBERS', item);
+          let obj = {};
+          obj.username = app.state.username; 
+          obj.email = app.state.email;
+          obj.tripName = app.state.tripName;
+          obj.receiptName = app.state.receiptName;
+          obj.itemAmount = item[0].amount;
+          obj.itemName = item[0].name;
+          // default to username
+          obj.debtor = app.state.username;
+
+          items.push(obj);
+        } else {
+          for (var j = 0; j < item[0].members.length; j++) {  
+            console.log('CURRENT ITEM WITH MULT MEMBERS', item);
+            let obj = {};
+            obj.username = app.state.username; 
+            obj.email = app.state.email;
+            obj.tripName = app.state.tripName;
+            obj.receiptName = app.state.receiptName;
+            obj.itemAmount = item[0].amount / item[0].members.length
+            obj.itemName = item[0].name;
+            obj.debtor = item[0].members[j];
+
+            items.push(obj);
+          }
+        }
+      }
+    }
+
+    let tipObj = {};
+    tipObj.username = app.state.username; 
+    tipObj.email = app.state.email;
+    tipObj.tripName = app.state.tripName;
+    tipObj.receiptName = app.state.receiptName;
+    tipObj.itemAmount = app.state.sumTip;
+    tipObj.itemName = 'tip'
+    tipObj.debtor = app.state.username;
+
+    items.push(tipObj);
+
+    console.log('FLAT OBJS ARR is currently', items);
   }
 
   verifyAuthentication(userInfo) {
@@ -500,7 +547,7 @@ class App extends React.Component {
 
   componentDidUpdate(){
     // this.logState();
-    this.createFlatObj();
+    this.createFlatObjs();
   }
 
   componentWillMount() {
