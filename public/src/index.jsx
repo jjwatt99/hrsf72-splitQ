@@ -92,7 +92,7 @@ class App extends React.Component {
     var date = new Date();
     var day = date.getDay();
     var month = date.getMonth();
-    var year = date.getYear();
+    var year = date.getFullYear();
     if (app.state.items.length < 1) {
       //do nothing
     } else {
@@ -106,7 +106,7 @@ class App extends React.Component {
       tipObj.debtor = app.state.username;
       tipObj.noticeType = 'none';
       tipObj.noticesSent = 0;
-      tipObj.dateOfDebt = `${month}/${day}/${year[1]}${year[2]}`;
+      tipObj.dateOfDebt = `${month}/${day}/${year}`;
       items.push(tipObj);
       var itemList = app.state.items;
 
@@ -125,7 +125,7 @@ class App extends React.Component {
           obj.debtor = app.state.username;
           obj.noticeType = 'none';
           obj.noticesSent = 0;
-          obj.dateOfDebt = `${month}/${day}/${year[1]}${year[2]}`;
+          obj.dateOfDebt = `${month}/${day}/${year}`;
 
 
 
@@ -142,7 +142,7 @@ class App extends React.Component {
             obj.debtor = item[0].members[j];
             obj.noticeType = 'none';
             obj.noticesSent = 0;
-            obj.dateOfDebt = `${month}/${day}/${year.toString()[1]}${year.toString()[2]}`;
+            obj.dateOfDebt = `${month}/${day}/${year}`;
 
 
             items.push(obj);
@@ -152,8 +152,8 @@ class App extends React.Component {
     }
 
     
-
     console.log('FLAT OBJS ARR is currently', items);
+    return items;
   }
 
   verifyAuthentication(userInfo) {
