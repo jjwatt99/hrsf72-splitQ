@@ -630,3 +630,7 @@ textarea#tripDesc::-webkit-input-placeholder{
   color: #fff;
   padding: 5px;
 }
+
+a.btn.btn-primary.btn-link {
+    color: white;
+}

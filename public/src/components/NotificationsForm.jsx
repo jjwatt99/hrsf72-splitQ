@@ -63,7 +63,7 @@ class NotificationsForm extends React.Component {
 		return (
 			<div>
 				<Form style="color:blue;margin-left:30px;" ref="form" type={Notice} value={value} options={options} />
-				<button onClick={()=>this.onSubmit(event)}>Start Notice</button>
+				<button className = 'btn btn-primary' onClick={()=>this.onSubmit(event)}>Start Notice</button>
 			</div>
 		);
 	}
