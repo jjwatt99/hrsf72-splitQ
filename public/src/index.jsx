@@ -47,8 +47,8 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
-      entitlement: null,
-      debt: null,
+      entitlement: 0,
+      debt: 0,
       recent: [ {name: 'No trips yet. Now create one!'}]
     };
 
@@ -203,9 +203,15 @@ class App extends React.Component {
       contentType: 'application/json',
       success: (results) => {
         console.log('debt', results)
-        context.setState({
-          debt: results
-        })
+        // if (results.length === 0) {
+        //   context.setState({
+        //     debt: 'unavailable'
+        //   })
+        // } else {
+        //   context.setState({
+        //     debt: 'unavailable'
+        //   })
+        // }
       },
       error: (error) => {
         console.log('now you fucked up')
@@ -223,13 +229,13 @@ class App extends React.Component {
       url: '/entitlement',
       contentType: 'application/json',
       success: (results) => {
-        console.log('entitlement', results)
-        context.setState({
-          entitlement: results
-        })
+        // console.log('entitlement', results)
+        // context.setState({
+        //   entitlement: 'unaailable';
+        // })
       },
       error: (error) => {
-        console.log('now you fucked up')
+        console.log('you have an error')
         console.log('error', error);
       }
     });
@@ -276,6 +282,7 @@ class App extends React.Component {
   }
 
   calculateMemberSum() {
+    var context = this;
     var memberSum = {};
     var currentScope = this;
     this.state.items.forEach(function(itemArr) {
@@ -294,8 +301,13 @@ class App extends React.Component {
         }
       }
     });
+
     console.log('memberSum = ', memberSum)
+
+    console.log(memberSum);
+
     this.setState({memberSum: memberSum});
+    this.setState({entitlement: context.state.entitlement + memberSum})
   }
 
 

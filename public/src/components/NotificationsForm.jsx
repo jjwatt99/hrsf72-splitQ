@@ -7,7 +7,7 @@ class NotificationsForm extends React.Component {
 		super(props);
 		this.onSubmit = this.onSubmit.bind(this);
 	}
-
+ 
 	onSubmit(evt) {
 		console.log('submitted! evt = ', evt);
 		if (this.refs.form.getValue()) {

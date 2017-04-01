@@ -159,7 +159,12 @@ app.get('/verify', authHelper, function(req, res) {
 
 /// Get debt nand entitlement
 app.get('/debt', function(req, res) {
-  res.status(200).json(2000);
+   db.getAllReceipts(function(err, results) {
+    res.json(results);
+   }) 
+
+  
+
 })
 
 app.get('/entitlement', function(req, res) {
