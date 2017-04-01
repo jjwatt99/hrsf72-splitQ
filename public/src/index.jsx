@@ -36,6 +36,7 @@ class App extends React.Component {
       member: '',
       memberExist: false,
       name: '',
+      email: '',
       photoUrl: '',
       sideMenuState: false,
       amount: '',
@@ -74,6 +75,24 @@ class App extends React.Component {
     this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
     this.getDebt = this.getDebt.bind(this);
     this.getEntitlement = this.getEntitlement.bind(this);
+    this.logState = this.logState.bind(this);
+  }
+
+  logState() {
+    var app = this;
+    console.log('CURRENT STATE: ', app.state);
+  }
+
+  createFlatObj() {
+    var app = this;
+    var obj = {};
+    obj.username = app.state.username; 
+    obj.email = app.state.email;
+    obj.tripName = app.state.tripName;
+    obj.receiptName = app.state.receiptName;
+
+    console.log('FLAT OBJ is currently', obj);
+    return obj;
   }
 
   verifyAuthentication(userInfo) {
@@ -82,7 +101,8 @@ class App extends React.Component {
       username: userInfo.name || '',
       members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
       fb_id: userInfo.fb_id || '',
-      photoUrl: userInfo.picture
+      photoUrl: userInfo.picture,
+      email: userInfo.email || '',
     });
   }
 
@@ -186,7 +206,6 @@ class App extends React.Component {
     this.state.member = '';
   }
 
-
   componentDidMount() {
     this.getRecentTrip();
     this.getDebt();
@@ -202,7 +221,7 @@ class App extends React.Component {
       url: '/debt',
       contentType: 'application/json',
       success: (results) => {
-        console.log('debt', results)
+        // console.log('debt', results)
         // if (results.length === 0) {
         //   context.setState({
         //     debt: 'unavailable'
@@ -214,7 +233,7 @@ class App extends React.Component {
         // }
       },
       error: (error) => {
-        console.log('now you fucked up')
+        console.log('now you messed up')
         console.log('error', error);
       }
     });
@@ -477,6 +496,11 @@ class App extends React.Component {
         </Router>
       </div>
     );
+  }
+
+  componentDidUpdate(){
+    // this.logState();
+    this.createFlatObj();
   }
 
   componentWillMount() {

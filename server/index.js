@@ -73,7 +73,8 @@ passport.use(new FacebookStrategy({
       };
       console.log('====================== user name', profile._json, '-----type of', typeof profile)
       console.log(')))((((((()))))))', userInfo)
-      // localStorage.user.picture = userInfo.picture
+      localStorage.user.picture = userInfo.picture;
+      localStorage.user.email = userInfo.email;
       db.createNewUser(userInfo);
       return cb(null, userInfo);
     });
@@ -152,7 +153,8 @@ app.get('/verify', authHelper, function(req, res) {
     isAuthenitcated: localStorage.isAuthenitcated,
     name: localStorage.user.name,
     fb_id: localStorage.user.fb_id,
-    picture: localStorage.user.picture
+    picture: localStorage.user.picture,
+    email: localStorage.user.email
   };
   res.send(userInfo);
 });
