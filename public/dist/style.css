@@ -514,6 +514,15 @@ textarea#tripDesc::-webkit-input-placeholder{
   align-items: center;
 }
 
+.whatever {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  padding: 0 1.4em;
+}
+.usersImageAtTheBottom{
+  border-radius: 100px
+}
 .receipt-add-members {
   display: flex;
   flex-flow: row nowrap;
@@ -537,7 +546,7 @@ textarea#tripDesc::-webkit-input-placeholder{
   flex-flow: row nowrap;
   align-items: center;
   margin: 0 4px;
-  height: 20px;
+  height: 54px;
   border-radius: 100px;
   padding: 0.2em 0.4em;
   border: #444242 solid 1px;

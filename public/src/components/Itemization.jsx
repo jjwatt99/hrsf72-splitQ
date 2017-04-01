@@ -4,7 +4,7 @@ import ReceiptItemEntryList from './ReceiptItemEntryList.jsx';
 import AddMember from './AddMember.jsx';
 import {Link} from 'react-router-dom';
 
-const Itemization = ({addItem, itemName, itemAmount, items, selectItem, deleteItem, selectMember, addMember, member, members, onInputChange, windowHeight, memberExist, itemOnClick, memberOnClick, initialMemberSelect,sumTax,sumTip,calculateTotal}) => (
+const Itemization = ({users, addItem, itemName, itemAmount, items, selectItem, deleteItem, selectMember, addMember, member, members, onInputChange, windowHeight, memberExist, itemOnClick, memberOnClick, initialMemberSelect,sumTax,sumTip,calculateTotal}) => (
 
   <div className='itemization-page'>
     <Link to='/upload-receipt' className='back-history'>Upload Receipt</Link>
@@ -32,6 +32,7 @@ const Itemization = ({addItem, itemName, itemAmount, items, selectItem, deleteIt
         className='btn btn-primary btn-wide btn-link'
       > Calculate </Link>
       <AddMember
+        users={users}
         addMember={addMember}
         member={member}
         members={members}
