@@ -27,7 +27,7 @@ class AddMember extends React.Component {
                   <div
                     key = {index} className ='receipt-members-bar-mem selectMember'
                     onClick={() => this.props.memberOnClick(user)}
-                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member[0] ? 'Selected' : '')}
+                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === user ? 'Selected' : '')}
                   >
                     <img className= 'usersImageAtTheBottom' src={user.picture}></img>
                     <h4>{user.firstName} </h4>
