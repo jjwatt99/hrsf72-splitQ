@@ -9,23 +9,34 @@ class NotificationsForm extends React.Component {
 	}
 
 	onSubmit(evt) {
-		console.log('submitted!');
+		console.log('submitted! evt = ', evt);
+		if (this.refs.form.getValue()) {
+	      var userInput = this.refs.form.getValue();
+	      console.log('this.refs.form.getValue() = ', userInput)
+	      if (userInput) {
+	        this.props.submitNotificationsForm(userInput);
+	      }
+    	}
 	}
 	render() {
 		var ListofEmails = t.enums.of(this.props.users.map(function(user) {
 			return user.email;
 		}));
-		var freqArr = ['Now and Daily', 'Daily', 'Now and Weekly', 'Weekly'];
+		var freqArr = ['Now', 'Daily', 'Weekly'];
 		var frequency = t.enums.of(freqArr);
 
 		const Form = t.form.Form;
 		const Notice = t.struct({
 			EmailList: t.list(ListofEmails),
 			Frequency: t.list(frequency),
-			Body: t.String
+			Body: t.maybe(t.String)
 		});
 		const value = {
-			Body: 'Pay me'
+			Body: this.props.items.map(function(item) {
+				return '\n' + Object.entries(item[0]).map(function(pair) {
+					return '   ' + pair[0] + ':  ' + pair[1] + ' ';
+				});
+			})
 		}
 
 		const options = {
