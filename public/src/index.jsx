@@ -249,6 +249,7 @@ class App extends React.Component {
         }
       }
     });
+    console.log('memberSum = ', memberSum)
     this.setState({memberSum: memberSum});
   }
 

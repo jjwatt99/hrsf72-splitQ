@@ -27,6 +27,7 @@ class Notifications extends React.Component {
 		this.getHeader = this.getHeader.bind(this);
 		this.getBody = this.getBody.bind(this);
 		this.getHTMLPart = this.getHTMLPart.bind(this);
+    this.submitNotificationsForm = this.submitNotificationsForm.bind(this);
 	}
 
 	componentWillMount() {
@@ -61,17 +62,18 @@ class Notifications extends React.Component {
 	}
 
 	handleAuthResult(authResult) {
-        if(authResult && !authResult.error) {
-          this.loadGmailApi();
-          $('#authorize-button').remove();
-          $('.table-inbox').removeClass("hidden");
-          $('#compose-button').removeClass("hidden");
-        } else {
-          $('#authorize-button').removeClass("hidden");
-          $('#authorize-button').on('click', function(){
-            this.handleAuthClick();
-          });
-        }
+    var context = this;
+    if(authResult && !authResult.error) {
+      this.loadGmailApi();
+      $('#authorize-button').remove();
+      $('.table-inbox').removeClass("hidden");
+      $('#compose-button').removeClass("hidden");
+    } else {
+      $('#authorize-button').removeClass("hidden");
+      $('#authorize-button').on('click', function(){
+        context.handleAuthClick();
+      });
+    }
 	}
 
 	loadGmailApi() {
@@ -154,14 +156,14 @@ class Notifications extends React.Component {
         });
 	}
 
-	sendEmail() {
+	sendEmail(email, subject, message) {
 		$('#send-button').addClass('disabled');
 		this.sendMessage(
 		  {
-		    'To': $('#compose-to').val(),
-		    'Subject': $('#compose-subject').val()
+		    'To': $('#compose-to').val() || email,
+		    'Subject': $('#compose-subject').val() || subject
 		  },
-		  $('#compose-message').val(),
+		  $('#compose-message').val() || message,
 		  this.composeTidy
 		);
 		// return false;
@@ -268,13 +270,26 @@ class Notifications extends React.Component {
         return '';
   }
 
+  submitNotificationsForm(userInput) {
+    if (userInput.Body.length > 0 && userInput.EmailList.length > 0 && userInput.Frequency.length > 0) {
+      if (userInput.Frequency[0] === 'Now') {
+        for (var i = 0; i < userInput.EmailList.length; i++) {
+          this.sendEmail(userInput.EmailList[i], 'Trip Expenditures Update', userInput.Body);
+          console.log('message sent! to --->', userInput.EmailList[i]);
+        }
+        alert('Message(s) Sent!\nRecipients: \n' + userInput.EmailList.map(function(email) {
+          return email + '\n';
+        }));
+      }
+    }
+  }
   render() {
     console.log(this.props)
     return (
       <div>
         <div className="container">
           <h1>Notifications</h1>
-          <NotificationsForm users={this.props.data.usersFromFacebook} />
+          <NotificationsForm submitNotificationsForm={this.submitNotificationsForm} users={this.props.data.usersFromFacebook} items={this.props.data.items}/>
 
             <a href="#compose-modal" data-toggle="modal" id="compose-button" className="btn btn-primary pull-right hidden">Compose</a>
 
