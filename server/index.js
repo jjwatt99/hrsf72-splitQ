@@ -245,14 +245,6 @@ app.post('/vision', function(req, res) {
   });
 });
 
-// Get debt for user
-app.post('/recent', (req, res) => {
-  db.getReceiptsAndTrips({adminName: 'Stephen Makowski', tripName: 'lol123'})
-  .then( (results) => {
-    res.send(results);
-  });
-});
-
 
 
 const port = process.env.PORT || 5000;
