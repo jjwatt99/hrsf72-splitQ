@@ -137,11 +137,6 @@ app.get('/login', authHelper, (req, res) => {
   }
 });
 
-app.post('/recent', function(req,res) {
-  //call query function for latest trip,
-  //res.send(object back to the client)
-});
-
 app.get('/logout', authHelper, function(req, res) {
   req.logout();
   res.redirect('/');
@@ -158,19 +153,14 @@ app.get('/verify', authHelper, function(req, res) {
   res.send(userInfo);
 });
 
-/// Get debt nand entitlement
-app.get('/debt', function(req, res) {
-   db.getAllReceipts(function(err, results) {
-    res.json(results);
-   }) 
-
-  
-
-})
-
-app.get('/entitlement', function(req, res) {
-  res.status(200).json(1000);
-})
+app.get('/recent', (req, res) => {
+  console.log('hi test');
+  db.getRecent(res);
+  // console.log(db.getReceiptsAndTrips());
+  // .then( (results) => {
+  //   res.send(results);
+  // });
+});
 
 app.get('*', checkAuthentication, authHelper, (req, res) => {
   console.log('wtf=======\n\n\n\n\n\n\n');
@@ -237,12 +227,7 @@ app.post('/summary', (req, res) => {
 });
 
 // this will duplicate with Duy's /recent
-app.post('/recent', (req, res) => {
-  db.getReceiptsAndTrips({adminName: 'Stephen Makowski', tripName: 'lol123'})
-  .then( (results) => {
-    res.send(results);
-  });
-});
+
 
 //gVision.spliceReceipt produces an object of item : price pairs
 app.post('/vision', function(req, res) {

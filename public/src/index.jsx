@@ -336,19 +336,10 @@ class App extends React.Component {
   }
 
   getRecentTrip() {
-    let user = this.state;
     $.ajax({
-      type: 'POST',
       url: '/recent',
-      data: user,
-      success: (results) => {
-        console.log('app component trips of this person', results);
-        this.setState({
-          recent: results
-        });
-      },
-      error: (error) => {
-        console.log('error', error);
+      success: function(data) {
+        console.log('recent trip', data);
       }
     });
   }

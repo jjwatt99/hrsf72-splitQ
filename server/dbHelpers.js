@@ -268,17 +268,72 @@ const getAllReceipts = (cb) => {
 }
 
 
-const getReceiptsAndTrips = (params) => {
-  let database = mysqlConfig.database;
-  //TODO
-  if (database = 'gewd') {
-    database = '';
-  } else if (database = 'heroku_a258462d4ded143') {
-    database = 'heroku_a258462d4ded143' + '.';
+var getRecent = function(res) {
+  console.log('hello');
+  var trips = [];
+  var count = 0;
+  function test() {
+    //console.log(db.queryAsync('select * from trips'));
+    return db.queryAsync('select * from trips');
   }
+  test()
+  .then((results) => {
+    console.log('helpers result', results);
+    var fillTrips = function () {
+      if (count === results.length) {
+        console.log('db helpers names', count);
+        res.json(trips);
+        return;
+      }
+      var obj = {};
+      obj.names = [];
+      obj.trip = results[count].name;
+      function members() {
+        return db.queryAsync('select members.name from members, trips where trips.id = ' + results[count].id);
+      }
+      members()
+      .then(function(data) {
+        obj.names.push(data);
+        trips.push(obj);
+        count++;
+        fillTrips();
+      })
+    }
+    fillTrips();
+    // for (var i = 0; i < results.length; i++) {
+    //   var obj = {};
+    //   obj.names = [];
+    //   if (results[i] !== undefined) {
+    //     obj.trip = results[i].name;
+    //   }
+    //   function members() {
+    //     return db.queryAsync('select members.name from members, trips where trips.id = ' + results[i].id);
+    //   }
+    //   members()
+    //   .then(function(data) {
+    //     obj.names.push(data);
+    //     trips.push(obj);
+    //     if (i === results.length) {
+    //       console.log('db helpers names', obj.names);
+    //       res.json(trips);
+    //     }
+    //   });
+    // }
+    // console.log('db helpers names', names);
+    // res.json(names);
+  })
+}
 
-  const queryStringGetAllTripsFromAdminName = `SELECT trips.name FROM ` + database + `trips WHERE trips.adminID = (SELECT members.id FROM ` + database + `members WHERE members.name = ?);`
-  const queryStringGetTripIDFromTripName = `SELECT trips.id from ` + database + `trips WHERE trips.name = ?;`
+  // let database = mysqlConfig.database;
+  
+  // if (database = 'gewd') {
+  //   database = '';
+  // } else if (database = 'heroku_a258462d4ded143') {
+  //   database = 'heroku_a258462d4ded143' + '.';
+  // }
+
+  // const queryStringGetAllTripsFromAdminName = `SELECT trips.name FROM ` + database + `trips WHERE trips.adminID = (SELECT members.id FROM ` + database + `members WHERE members.name = ?);`
+  // const queryStringGetTripIDFromTripName = `SELECT trips.id from ` + database + `trips WHERE trips.name = ?;`
   // const queryStringGetMemberIDFromTripID = `SELECT trips_members.memberID from heroku_a258462d4ded143.trips_members WHERE trips_members.tripID = ?;`
   // const queryStringGetMemberNameFromMemberID = `SELECT members.name FROM heroku_a258462d4ded143.members WHERE members.id = ?;`
 
@@ -288,19 +343,18 @@ const getReceiptsAndTrips = (params) => {
   // const queryStringGetSumTaxFromReceiptName = `SELECT receipts.sum_tax FROM receipts WHERE receipts.name = ?;`
   // const queryStringGetSumTipFromReceiptName = `SELECT receipts.sum_tip FROM receipts WHERE receipts.name = ?;`
 
-  let adminName = params.adminName;
-  let tripName = params.tripName;
+  // let adminName = params.adminName;
+  // let tripName = params.tripName;
 
-  return db.queryAsync(queryStringGetAllTripsFromAdminName, adminName)
-    .then( tripsArray => tripsArray )
+  // return db.queryAsync(queryStringGetAllTripsFromAdminName, adminName)
+  //   .then( tripsArray => tripsArray )
     // .then( tripsArray => {
     //   return Promise.map( tripsArray, trip => {
     //     return db.queryAsync(queryStringGetTripIDFromTripName, trip.name)
     //       .then( tripID => tripID )
     //   })
     // })
-    .catch( err => console.log('ERROR: getAllTripsFromAdminName', err ));
-}
+    // .catch( err => console.log('ERROR: getAllTripsFromAdminName', err ));
 
 module.exports = {
   getAllReceipts,
@@ -312,5 +366,5 @@ module.exports = {
   storeReceiptItems,
   assignItemsToMembers,
   createMemberSummary,
-  getReceiptsAndTrips
+  getRecent
 }

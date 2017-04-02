@@ -7,8 +7,12 @@ class TripSummary extends React.Component {
     super(props);
   }
 
+  // componentDidMount() {
+  //   this.props.;
+  // }
+
   render() {
-    console.log('trip summary', this.props.data.recent);
+    console.log('trip summary', this.props);
     return(
       <div className='page-container'>
         <h1>Most Recent Trips</h1>
