@@ -11,8 +11,7 @@ Promise.promisifyAll(db);
 
 const queryString = {
 
-  createNewUser: 'INSERT INTO\
-                    members (name)\
+  createNewUser: 'INSERT INTO members (name)\
                     VALUES (?)',
 
   createNewTrip: 'INSERT INTO trips (name, adminID)\
@@ -82,7 +81,7 @@ const createNewUser = (userInfo) => {
   db.queryAsync(`SELECT * from members where fb_id = ?`, userInfo.fb_id)
     .then( user => {
       console.log('successful checked user');
-      if(!user[0]) {
+      if(user.length === 0) {
         db.queryAsync(`INSERT INTO members set ?`, userInfo)
       } else {
         console.log('user already exisit');
@@ -197,38 +196,49 @@ const assignItemsToMembers = (allItemsArray, params) => {
     }
 }
 
-const createMemberSummary = (params) => {
+var createMemberSummary = (params) => {
   // console.log('----params passed down to Server here!!!!------', params);
-  let tripName = params.tripName;
+  var tripName = params.tripName;
   // NEED: fb_id, name, email, token
-  let adminName = params.username;
-  let payor = params.username;
-  let receiptName = params.receiptName;
+  var adminName = params.username;
+  var payor = params.username;
+  var receiptName = params.receiptName;
   params.receiptUrl = params.receiptUrl || receiptName + Math.floor(Math.random(0, 1) * 10000000);
-  let receiptUrl = params.receiptUrl;
-  let sumBill = Number(params.sumBill) || 0;
-  let sumTax = Number(params.sumTax) || 0;
-  let sumTip = Number(params.sumTip) || 0;
-  let memberArrayWithDupes = [].concat.apply([], params.members);
-  let noDupeMemberArray = [].concat.apply([], params.members);
-  noDupeMemberArray.shift();
-  let allItemsArray = [];
-  for (let i = 0; i < params.items.length; i++) {
+  var receiptUrl = params.receiptUrl;
+  var sumBill = Number(params.sumBill) || 0;
+  var sumTax = Number(params.sumTax) || 0;
+  var sumTip = Number(params.sumTip) || 0;
+  // let memberArrayWithDupes = [params.members];
+  var memArray = params.members;
+  console.log('param items', params.items);
+  var allItemsArray = [];
+  for (var i = 0; i < params.items.length; i++) {
     allItemsArray.push(params.items[i][0].name);
   }
 
-  let allPricesArray = [];
-  for (let i = 0; i < params.items.length; i++) {
+  var allPricesArray = [];
+  for (var i = 0; i < params.items.length; i++) {
     allPricesArray.push(params.items[i][0].amount);
+  }
+
+
+  function test() {
+    for (var i = 1; i < memArray.length; i++) {
+      db.queryAsync('INSERT INTO members (name) select * from (select \'' + memArray[i][0] + '\') as tmp\
+        where not exists (select name from members where name = \'' + memArray[i][0] + '\') limit 1');
+    }
+    return Promise.map(memArray, (item) => {
+      return  db.queryAsync('SELECT members.id FROM members WHERE members.name = \'' + item[0] + '\'')
+        .then( function(result) {
+          return db.queryAsync('INSERT INTO trips_members (tripID, memberID) VALUES ((SELECT trips.id FROM trips\
+          WHERE trips.name = \'' + tripName + '\'), ' + result[0].id + ' )');
+        });
+    });
   }
 
   createNewTrip([tripName, adminName])
   .then( () => {
-    return addMembersToTrip({
-      tripName: tripName,
-      adminName: adminName,
-      noDupeMemberArray: noDupeMemberArray
-    })
+    return test()
     .then( () => {
       return addReceipt([payor, tripName, adminName, receiptName, receiptUrl, sumBill, sumTax, sumTip]);
     })

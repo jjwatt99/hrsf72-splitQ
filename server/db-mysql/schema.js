@@ -72,3 +72,5 @@ module.exports = {
     REFERENCES trips(id)'
 };
 
+// select members.name from members, trips where trips.id = 1;
+

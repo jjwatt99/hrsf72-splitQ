@@ -31,7 +31,6 @@ app.use(fileUpload());
 
 // Use application-level middleware for common functionality, including
 // logging, parsing, and session handling.
-app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
 app.use(require('express-session')({
   secret: process.env.SESSION_SECRET || 'thisCouldBeAnything',
