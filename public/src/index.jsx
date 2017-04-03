@@ -274,6 +274,7 @@ class App extends React.Component {
   addMember (itemArray) {
 
     var temp = this.state.members;
+    var users = this.state.usersFromFacebook;
     this.memberExist(this.state.member, (exist) => {
       this.setState({
         memberExist: exist
@@ -284,6 +285,10 @@ class App extends React.Component {
           members: temp
         });
       }
+    });
+    users.push({name: this.state.member});
+    this.setState({
+      usersFromFacebook: users
     });
     this.state.member = '';
   }

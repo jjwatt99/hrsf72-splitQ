@@ -26,11 +26,11 @@ class AddMember extends React.Component {
               return (
                   <div
                     key = {index}
-                    onClick={() => this.props.memberOnClick(user.firstName)}
+                    onClick={() => this.props.memberOnClick(user.name)}
                     className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === user ? 'Selected' : '')}
                   >
-                    <img className= 'usersImageAtTheBottom' src={user.picture}></img>
-                    <h4>{user.firstName} </h4>
+                    {user.picture ? <img className= 'usersImageAtTheBottom' src={user.picture}></img> : null}
+                    <h4>{user.name} </h4>
                   </div>
                   )
             })
@@ -46,11 +46,10 @@ class AddMember extends React.Component {
                 return (
                   <div
                     key={index}
-                    onClick={() => this.props.memberOnClick(member.firstName)}
-                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member.firstName
-                        ? 'Selected' : '')}
+                    onClick={() => this.props.memberOnClick(member.name)}
+                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member ? 'Selected' : '')}
                   >
-                  <span className='receipt-members-bar-mem-name'>{member.firstName}</span>
+                  <span className='receipt-members-bar-mem-name'>{member.name}</span>
                   </div>
                 )
               })}

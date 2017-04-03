@@ -142,6 +142,7 @@ p {
   border: #4A90E2 1px solid;
   padding: 1em;
   color: #4A90E2;*/
+  float: left;
   padding-left: 1.4em;
 }
 
@@ -207,6 +208,7 @@ input#input-amount-tip{
 }
 
 input#input-member {
+  float: left;
   background-color: #fff;
   width: 350px;
   height: 45px;
@@ -515,7 +517,6 @@ textarea#tripDesc::-webkit-input-placeholder{
   left: 0;
   height: 100px;
   width: 100%;
-  background-color: #F8F8F8
 }
 
 .receipt-members-bar-inner-container {
@@ -524,6 +525,7 @@ textarea#tripDesc::-webkit-input-placeholder{
   padding: 0 1.4em;
   flex-basis: 100%;
   align-items: center;
+  background-color: #F8F8F8
 }
 
 .whatever {
@@ -534,6 +536,8 @@ textarea#tripDesc::-webkit-input-placeholder{
 }
 .usersImageAtTheBottom{
   border-radius: 100px
+  width: 50px;
+  height: 50px;
 }
 .receipt-add-members {
   display: flex;
