@@ -210,20 +210,8 @@ input#input-amount-tip{
 input#input-member {
   float: left;
   background-color: #fff;
-  width: 350px;
-  height: 45px;
+  width: 300px;
   font-size: 0.9em;
-  display: inline-block;
-  text-decoration: none;
-	border: none;
-	color: darkgrey;
-	padding: 10px 25px;
-	font-size: 1rem;
-	border-radius: 3px;
-	cursor: pointer;
-	font-family: 'Roboto', sans-serif;
-	font-weight: 300;
-	position: relative;
 }
 
 label.file-upload-btn {
