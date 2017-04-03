@@ -79,7 +79,7 @@ class App extends React.Component {
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
-      members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.name]]) : this.state.members,
+      // members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.firstName]]) : this.state.members,
       fb_id: userInfo.fb_id || '',
       photoUrl: userInfo.picture
     });
@@ -174,17 +174,11 @@ class App extends React.Component {
   }
 
   addMember (itemArray) {
-    this.memberExist(this.state.member, (exist) => {
+    console.log('this state members', this.state.members)
+    var newMembers = this.state.members.push(this.state.member)
       this.setState({
-        memberExist: exist
-      });
-      if (!exist) {
-        this.setState({
-          members: this.state.members.concat([[this.state.member]])
-        });
-      }
-    });
-    this.state.member = '';
+        members: newMembers
+      })
   }
 
 

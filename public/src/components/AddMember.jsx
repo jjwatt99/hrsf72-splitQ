@@ -36,18 +36,6 @@ class AddMember extends React.Component {
             })
             }
             </div>
-              <input
-                placeholder='Name'
-                name='member'
-                type='text'
-                value={this.props.member}
-                id='input-member'
-                onChange={this.props.onInputChange}
-              />
-              <a
-                onClick={this.props.addMember}
-                className='btn-circle'
-              ></a>
             </div>
             <div className='receipt-members-list'>
               {this.props.users.map((member, index) => {
@@ -63,6 +51,19 @@ class AddMember extends React.Component {
                   </div>
                 )
               })}
+
+              <input
+                placeholder='Name'
+                name='member'
+                type='text'
+                value={this.props.member}
+                id='input-member'
+                onChange={this.props.onInputChange}
+              />
+              <a
+                onClick={this.props.addMember}
+                className='btn-circle'
+              ></a>
             </div>
           </div>
         </div>

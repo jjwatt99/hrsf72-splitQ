@@ -150,7 +150,6 @@ app.get('/verify', authHelper, function(req, res) {
     isAuthenitcated: localStorage.isAuthenitcated,
     name: localStorage.user.name,
     fb_id: localStorage.user.fb_id,
-    picture: localStorage.user.picture
   };
   res.send(userInfo);
 });
