@@ -56,7 +56,8 @@ class AddMember extends React.Component {
                   <div
                     key={index}
                     onClick={() => this.props.memberOnClick(member.firstName)}
-                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member ? 'Selected' : '')}
+                    className={'receipt-members-bar-mem selectMember' + (this.props.selectMember === member.firstName
+                        ? 'Selected' : '')}
                   >
                   <span className='receipt-members-bar-mem-name'>{member.firstName}</span>
                   </div>

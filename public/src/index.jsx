@@ -297,10 +297,15 @@ class App extends React.Component {
   }
 
   memberOnClick(member) {
-    this.setState({
-      selectMember: member
-        //
-    });
+    if (this.state.selectMember === '') {
+      this.setState({
+        selectMember: member
+      });
+    } else {
+      this.setState({
+        selectMember: ''
+      })
+    }
   }
 
   menuOnClick() {
