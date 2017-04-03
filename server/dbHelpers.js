@@ -12,8 +12,7 @@ Promise.promisifyAll(db);
 
 const queryString = {
 
-  createNewUser: 'INSERT INTO\
-                    members (name)\
+  createNewUser: 'INSERT INTO members (name)\
                     VALUES (?)',
 
   createNewTrip: 'INSERT INTO trips (name, adminID)\
@@ -83,7 +82,7 @@ const createNewUser = (userInfo) => {
   db.queryAsync(`SELECT * from members where fb_id = ?`, userInfo.fb_id)
     .then( user => {
       console.log('successful checked user');
-      if(!user[0]) {
+      if(user.length === 0) {
         db.queryAsync(`INSERT INTO members set ?`, userInfo)
       } else {
         console.log('user already exisit');
@@ -198,38 +197,49 @@ const assignItemsToMembers = (allItemsArray, params) => {
     }
 }
 
-const createMemberSummary = (params) => {
+var createMemberSummary = (params) => {
   // console.log('----params passed down to Server here!!!!------', params);
-  let tripName = params.tripName;
+  var tripName = params.tripName;
   // NEED: fb_id, name, email, token
-  let adminName = params.username;
-  let payor = params.username;
-  let receiptName = params.receiptName;
+  var adminName = params.username;
+  var payor = params.username;
+  var receiptName = params.receiptName;
   params.receiptUrl = params.receiptUrl || receiptName + Math.floor(Math.random(0, 1) * 10000000);
-  let receiptUrl = params.receiptUrl;
-  let sumBill = Number(params.sumBill) || 0;
-  let sumTax = Number(params.sumTax) || 0;
-  let sumTip = Number(params.sumTip) || 0;
-  let memberArrayWithDupes = [].concat.apply([], params.members);
-  let noDupeMemberArray = [].concat.apply([], params.members);
-  noDupeMemberArray.shift();
-  let allItemsArray = [];
-  for (let i = 0; i < params.items.length; i++) {
+  var receiptUrl = params.receiptUrl;
+  var sumBill = Number(params.sumBill) || 0;
+  var sumTax = Number(params.sumTax) || 0;
+  var sumTip = Number(params.sumTip) || 0;
+  // let memberArrayWithDupes = [params.members];
+  var memArray = params.members;
+  console.log('param items', params.items);
+  var allItemsArray = [];
+  for (var i = 0; i < params.items.length; i++) {
     allItemsArray.push(params.items[i][0].name);
   }
 
-  let allPricesArray = [];
-  for (let i = 0; i < params.items.length; i++) {
+  var allPricesArray = [];
+  for (var i = 0; i < params.items.length; i++) {
     allPricesArray.push(params.items[i][0].amount);
+  }
+
+
+  function test() {
+    for (var i = 0; i < memArray.length; i++) {
+      db.queryAsync('INSERT INTO members (name) select * from (select \'' + memArray[i][0] + '\') as tmp\
+        where not exists (select name from members where name = \'' + memArray[i][0] + '\') limit 1');
+    }
+    return Promise.map(memArray, (item) => {
+      return  db.queryAsync('SELECT members.id FROM members WHERE members.name = \'' + item[0] + '\'')
+        .then( function(result) {
+          return db.queryAsync('INSERT INTO trips_members (tripID, memberID) VALUES ((SELECT trips.id FROM trips\
+          WHERE trips.name = \'' + tripName + '\'), ' + result[0].id + ' )');
+        });
+    });
   }
 
   createNewTrip([tripName, adminName])
   .then( () => {
-    return addMembersToTrip({
-      tripName: tripName,
-      adminName: adminName,
-      noDupeMemberArray: noDupeMemberArray
-    })
+    return test()
     .then( () => {
       return addReceipt([payor, tripName, adminName, receiptName, receiptUrl, sumBill, sumTax, sumTip]);
     })
@@ -248,18 +258,83 @@ const createMemberSummary = (params) => {
 }
 //
 
+const getAllReceipts = (cb) => {
+  db.query('SELECT * FROM members', function(err, results) {
+    if (err) {
+      cb(err, null);
+    } else {
+      cb(null, results);
+    }
+  });
+}
 
-const getReceiptsAndTrips = (params) => {
-  let database = mysqlConfig.database;
-  //TODO
-  if (database = 'gewd') {
-    database = '';
-  } else if (database = 'heroku_a258462d4ded143') {
-    database = 'heroku_a258462d4ded143' + '.';
+
+var getRecent = function(res) {
+  console.log('hello');
+  var trips = [];
+  var count = 0;
+  function test() {
+    //console.log(db.queryAsync('select * from trips'));
+    return db.queryAsync('select * from trips');
   }
+  test()
+  .then((results) => {
+    console.log('helpers result', results);
+    var fillTrips = function () {
+      if (count === results.length) {
+        console.log('db helpers names', count);
+        res.json(trips);
+        return;
+      }
+      var obj = {};
+      obj.names = [];
+      obj.trip = results[count].name;
+      function members() {
+        return db.queryAsync('select members.name from members, trips where trips.id = ' + results[count].id);
+      }
+      members()
+      .then(function(data) {
+        obj.names.push(data);
+        trips.push(obj);
+        count++;
+        fillTrips();
+      })
+    }
+    fillTrips();
+    // for (var i = 0; i < results.length; i++) {
+    //   var obj = {};
+    //   obj.names = [];
+    //   if (results[i] !== undefined) {
+    //     obj.trip = results[i].name;
+    //   }
+    //   function members() {
+    //     return db.queryAsync('select members.name from members, trips where trips.id = ' + results[i].id);
+    //   }
+    //   members()
+    //   .then(function(data) {
+    //     obj.names.push(data);
+    //     trips.push(obj);
+    //     if (i === results.length) {
+    //       console.log('db helpers names', obj.names);
+    //       res.json(trips);
+    //     }
+    //   });
+    // }
+    // console.log('db helpers names', names);
+    // res.json(names);
+  })
+}
 
-  const queryStringGetAllTripsFromAdminName = `SELECT trips.name FROM ` + database + `trips WHERE trips.adminID = (SELECT members.id FROM ` + database + `members WHERE members.name = ?);`
-  const queryStringGetTripIDFromTripName = `SELECT trips.id from ` + database + `trips WHERE trips.name = ?;`
+  // let database = mysqlConfig.database;
+  
+  // if (database = 'gewd') {
+  //   database = '';
+  // } else if (database = 'heroku_a258462d4ded143') {
+  //   database = 'heroku_a258462d4ded143' + '.';
+  // }
+
+  // const queryStringGetAllTripsFromAdminName = `SELECT trips.name FROM ` + database + `trips WHERE trips.adminID = (SELECT members.id FROM ` + database + `members WHERE members.name = ?);`
+  // const queryStringGetTripIDFromTripName = `SELECT trips.id from ` + database + `trips WHERE trips.name = ?;`
   // const queryStringGetMemberIDFromTripID = `SELECT trips_members.memberID from heroku_a258462d4ded143.trips_members WHERE trips_members.tripID = ?;`
   // const queryStringGetMemberNameFromMemberID = `SELECT members.name FROM heroku_a258462d4ded143.members WHERE members.id = ?;`
 
@@ -269,21 +344,21 @@ const getReceiptsAndTrips = (params) => {
   // const queryStringGetSumTaxFromReceiptName = `SELECT receipts.sum_tax FROM receipts WHERE receipts.name = ?;`
   // const queryStringGetSumTipFromReceiptName = `SELECT receipts.sum_tip FROM receipts WHERE receipts.name = ?;`
 
-  let adminName = params.adminName;
-  let tripName = params.tripName;
+  // let adminName = params.adminName;
+  // let tripName = params.tripName;
 
-  return db.queryAsync(queryStringGetAllTripsFromAdminName, adminName)
-    .then( tripsArray => tripsArray )
+  // return db.queryAsync(queryStringGetAllTripsFromAdminName, adminName)
+  //   .then( tripsArray => tripsArray )
     // .then( tripsArray => {
     //   return Promise.map( tripsArray, trip => {
     //     return db.queryAsync(queryStringGetTripIDFromTripName, trip.name)
     //       .then( tripID => tripID )
     //   })
     // })
-    .catch( err => console.log('ERROR: getAllTripsFromAdminName', err ));
-}
+    // .catch( err => console.log('ERROR: getAllTripsFromAdminName', err ));
 
 module.exports = {
+  getAllReceipts,
   getUsersFromFacebook,
   createNewUser,
   createNewTrip,
@@ -292,5 +367,5 @@ module.exports = {
   storeReceiptItems,
   assignItemsToMembers,
   createMemberSummary,
-  getReceiptsAndTrips
+  getRecent
 }

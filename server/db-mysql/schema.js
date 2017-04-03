@@ -2,9 +2,7 @@ module.exports = {
   members: 'CREATE TABLE IF NOT EXISTS members (\
       id            int NOT NULL AUTO_INCREMENT,\
       fb_id          varchar(100) NOT NULL DEFAULT \'Payee\',\
-      name          varchar(50) NOT NULL, \
-      firstName          varchar(50) NOT NULL,\
-      lastName          varchar(50) NOT NULL,\
+      name          varchar(50) NOT NULL,\
       email          varchar(50) NOT NULL DEFAULT \'Payee\',\
       token          varchar(360) NOT NULL DEFAULT \'Payee\',\
       picture        varchar(360) NOT NULL DEFAULT \'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pomeranian.JPG/200px-Pomeranian.JPG\',\
@@ -71,4 +69,6 @@ module.exports = {
   ctrip: 'ALTER TABLE consumed_items ADD FOREIGN KEY (tripID)\
     REFERENCES trips(id)'
 };
+
+// select members.name from members, trips where trips.id = 1;
 

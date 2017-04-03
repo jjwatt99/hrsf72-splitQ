@@ -36,6 +36,7 @@ class App extends React.Component {
       member: '',
       memberExist: false,
       name: '',
+      email: '',
       photoUrl: '',
       sideMenuState: false,
       amount: '',
@@ -47,9 +48,10 @@ class App extends React.Component {
       amount: '',
       sideMenuState: false,
       windowHeight: '',
-      entitlement: null,
-      debt: null,
-      recent: [ {name: 'No trips yet. Now create one!'}]
+      entitlement: 0,
+      debt: 0,
+      recent: [ {name: 'No trips yet. Now create one!'}],
+      flatObjs: []
     };
 
     this.verifyAuthentication = this.verifyAuthentication.bind(this);
@@ -72,34 +74,130 @@ class App extends React.Component {
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
     this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
+    this.getDebt = this.getDebt.bind(this);
+    this.getEntitlement = this.getEntitlement.bind(this);
+    this.logState = this.logState.bind(this);
+    this.createFlatObjs = this.createFlatObjs.bind(this);
+  }
+
+  logState() {
+    var app = this;
+    console.log('CURRENT STATE: ', app.state);
+  }
+
+  createFlatObjs() {
+    var items = [];
+    // go through items and do the stuff below
+    var app = this;
+    var date = new Date();
+    var day = date.getDay();
+    var month = date.getMonth();
+    var year = date.getFullYear();
+    if (app.state.items.length < 1) {
+      //do nothing
+    } else {
+      let tipObj = {};
+      tipObj.username = app.state.username; 
+      tipObj.email = app.state.email;
+      tipObj.tripName = app.state.tripName;
+      tipObj.receiptName = app.state.receiptName;
+      tipObj.itemAmount = app.state.sumTip;
+      tipObj.itemName = 'tip'
+      tipObj.debtor = app.state.username;
+      tipObj.noticeType = 'none';
+      tipObj.noticesSent = 0;
+      tipObj.dateOfDebt = `${month}/${day}/${year}`;
+      items.push(tipObj);
+      var itemList = app.state.items;
+
+      for (var i = 0; i < itemList.length; i++) {
+        let item = itemList[i];
+
+        if (item[0].members.length === 0) {
+          let obj = {};
+          obj.username = app.state.username; 
+          obj.email = app.state.email;
+          obj.tripName = app.state.tripName;
+          obj.receiptName = app.state.receiptName;
+          obj.itemAmount = item[0].amount;
+          obj.itemName = item[0].name;
+          // default to username
+          obj.debtor = app.state.username;
+          obj.noticeType = 'none';
+          obj.noticesSent = 0;
+          obj.dateOfDebt = `${month}/${day}/${year}`;
+
+
+
+          items.push(obj);
+        } else {
+          for (var j = 0; j < item[0].members.length; j++) {  
+            let obj = {};
+            obj.username = app.state.username; 
+            obj.email = app.state.email;
+            obj.tripName = app.state.tripName;
+            obj.receiptName = app.state.receiptName;
+            obj.itemAmount = item[0].amount / item[0].members.length
+            obj.itemName = item[0].name;
+            obj.debtor = item[0].members[j];
+            obj.noticeType = 'none';
+            obj.noticesSent = 0;
+            obj.dateOfDebt = `${month}/${day}/${year}`;
+
+
+            items.push(obj);
+          }
+        }
+      }
+    }
+
+    
+    console.log('FLAT OBJS ARR is currently', items);
+    return items;
+  }
+
+  componentWillMount() {
+    this.getUsersFromFacebook();
+    this.updateDimensions();
+    window.addEventListener('resize', this.updateDimensions.bind(this));
+    Util.verify(this.verifyAuthentication);
+  }
+
+  componentDidMount() {
+    this.getRecentTrip();
+    this.getDebt();
+    this.getEntitlement();
   }
 
   verifyAuthentication(userInfo) {
-    console.log(userInfo);
+    var temp = this.state.members;
+    if (userInfo.name !== undefined) {
+      temp.push([userInfo.name]);
+    }
     this.setState({
       isAuthenticated: userInfo.isAuthenitcated,
       username: userInfo.name || '',
-      // members: userInfo.name !== undefined ? this.state.members.concat([[userInfo.firstName]]) : this.state.members,
+      members: temp,
       fb_id: userInfo.fb_id || '',
-      photoUrl: userInfo.picture
+      photoUrl: userInfo.picture,
+      email: userInfo.email || '',
     });
+    console.log('verify members 2', this.state.members);
   }
 
   handleClickLogout(event) {
     event.preventDefault();
     Util.logout(this.verifyAuthentication);
   }
-
+ 
   addItem (itemArray) {
     if (this.state.name === '' || this.state.amount === '') {
       console.log('Please include item and price');
     } else {
+      var temp = this.state.items;
+      temp.push([{name: this.state.name, amount: this.state.amount, members: []}]);
       this.setState({
-        items: this.state.items.concat([[{
-          name: this.state.name,
-          amount: this.state.amount,
-          members: []
-        }]])
+        items: temp
       });
     }
     this.state.name = '';
@@ -107,7 +205,7 @@ class App extends React.Component {
   }
 
   deleteItem(index) {
-    delete this.state.items[index];
+    this.state.items.splice(0, 1);
     this.setState({
       items: this.state.items
     });
@@ -174,32 +272,75 @@ class App extends React.Component {
   }
 
   addMember (itemArray) {
-    console.log('this state members', this.state.members)
-    var newMembers = this.state.members.push(this.state.member)
+
+    var temp = this.state.members;
+    this.memberExist(this.state.member, (exist) => {
       this.setState({
-        members: newMembers
-      })
+        memberExist: exist
+      });
+      if (!exist) {
+        temp.push([this.state.member]);
+        this.setState({
+          members: temp
+        });
+      }
+    });
+    this.state.member = '';
   }
 
+  getDebt() {
+    console.log('Getting Debt')
+    var context = this;
 
-  componentDidMount() {
-    this.getRecentTrip();
+    $.ajax({
+      type: 'GET',
+      url: '/debt',
+      contentType: 'application/json',
+      success: (results) => {
+        // console.log('debt', results)
+        // if (results.length === 0) {
+        //   context.setState({
+        //     debt: 'unavailable'
+        //   })
+        // } else {
+        //   context.setState({
+        //     debt: 'unavailable'
+        //   })
+        // }
+      },
+      error: (error) => {
+        console.log('now you messed up')
+        console.log('error', error);
+      }
+    });
+  }
+
+  getEntitlement() {
+    console.log('Getting Debt')
+    var context = this;
+
+    $.ajax({
+      type: 'GET',
+      url: '/entitlement',
+      contentType: 'application/json',
+      success: (results) => {
+        // console.log('entitlement', results)
+        // context.setState({
+        //   entitlement: 'unaailable';
+        // })
+      },
+      error: (error) => {
+        console.log('you have an error')
+        console.log('error', error);
+      }
+    });
   }
 
   getRecentTrip() {
-    let user = this.state;
     $.ajax({
-      type: 'POST',
       url: '/recent',
-      data: user,
-      success: (results) => {
-        console.log('app component trips of this person', results);
-        this.setState({
-          recent: results
-        });
-      },
-      error: (error) => {
-        console.log('error', error);
+      success: function(data) {
+        console.log('recent trip', data);
       }
     });
   }
@@ -227,12 +368,12 @@ class App extends React.Component {
   }
 
   calculateMemberSum() {
+    var context = this;
     var memberSum = {};
     var currentScope = this;
     this.state.items.forEach(function(itemArr) {
       var itemObj = itemArr[0];
       var eachPrice = itemObj.amount / itemObj.members.length;
-      console.log('....??', itemObj);
       if (itemObj.members.length === 0) {
         // itemObj.members = [].concat.apply([], this.state.members);
         itemObj.members.push('Testing');
@@ -245,8 +386,13 @@ class App extends React.Component {
         }
       }
     });
+
     console.log('memberSum = ', memberSum)
+
+    console.log(memberSum);
+
     this.setState({memberSum: memberSum});
+    this.setState({entitlement: context.state.entitlement + memberSum})
   }
 
 
@@ -271,7 +417,7 @@ class App extends React.Component {
     let membersCurrIndex = members.indexOf(member);
 
     if (membersCurrIndex < 0) {
-      items[index][0].members = members.concat([member]);
+      items[index][0].members = members.push([member]);
     } else {
       members.splice(membersCurrIndex, 1);
     }
@@ -321,6 +467,7 @@ class App extends React.Component {
   }
 
   render() {
+    console.log('index members', this.state.members);
     return (
       <div className='site-container'>
         <Router>
@@ -421,13 +568,6 @@ class App extends React.Component {
         </Router>
       </div>
     );
-  }
-
-  componentWillMount() {
-    this.getUsersFromFacebook();
-    this.updateDimensions();
-    window.addEventListener('resize', this.updateDimensions.bind(this));
-    Util.verify(this.verifyAuthentication);
   }
 }
 
