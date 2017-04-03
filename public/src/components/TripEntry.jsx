@@ -6,11 +6,11 @@ class TripEntry extends React.Component {
   }
 
   render() {
+    var members = this.props.data.names[0].reduce(function(acc, val) { return acc += val.name + ', ' }, '').slice(0, -2);
     return (
       <div>
-        <h3>Trip Name</h3> <p>Total: $193.00</p>
-        <p>Date: 2014 March</p>
-        <p>People: </p>
+        <h3>{this.props.data.trip}</h3>
+        <h4>{'Members: ' + members}</h4>
       </div>
     )
   }

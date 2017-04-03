@@ -5,19 +5,27 @@ import TripEntry from './TripEntry.jsx';
 class TripSummary extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      trips: []
+    };
   }
 
-  // componentDidMount() {
-  //   this.props.;
-  // }
+  componentDidMount() {
+    this.props.recent(function(data) {
+      var result = this.state.trips;
+      result.push(data[data.length - 1]);
+      this.setState({
+        trips: result
+      });
+    }.bind(this));
+  }
 
   render() {
-    console.log('trip summary', this.props);
     return(
       <div className='page-container'>
         <h1>Most Recent Trips</h1>
-        <div className='trip-summary'>{this.props.data.recent.map((item,index) => {
-          return (<TripEntry trip={item} />)
+        <div className='trip-summary'>{this.state.trips.map((val) => {
+          return (<TripEntry data={val} />)
         })}
         </div>
       </div>

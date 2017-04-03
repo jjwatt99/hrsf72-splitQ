@@ -74,8 +74,8 @@ class App extends React.Component {
     this.updateDimensions = this.updateDimensions.bind(this);
     this.getRecentTrip = this.getRecentTrip.bind(this);
     this.getUsersFromFacebook = this.getUsersFromFacebook.bind(this);
-    this.getDebt = this.getDebt.bind(this);
-    this.getEntitlement = this.getEntitlement.bind(this);
+    // this.getDebt = this.getDebt.bind(this);
+    // this.getEntitlement = this.getEntitlement.bind(this);
     this.logState = this.logState.bind(this);
     this.createFlatObjs = this.createFlatObjs.bind(this);
   }
@@ -288,59 +288,60 @@ class App extends React.Component {
     this.state.member = '';
   }
 
-  getDebt() {
-    console.log('Getting Debt')
-    var context = this;
+  // getDebt() {
+  //   console.log('Getting Debt')
+  //   var context = this;
 
-    $.ajax({
-      type: 'GET',
-      url: '/debt',
-      contentType: 'application/json',
-      success: (results) => {
-        // console.log('debt', results)
-        // if (results.length === 0) {
-        //   context.setState({
-        //     debt: 'unavailable'
-        //   })
-        // } else {
-        //   context.setState({
-        //     debt: 'unavailable'
-        //   })
-        // }
-      },
-      error: (error) => {
-        console.log('now you messed up')
-        console.log('error', error);
-      }
-    });
-  }
+  //   $.ajax({
+  //     type: 'GET',
+  //     url: '/debt',
+  //     contentType: 'application/json',
+  //     success: (results) => {
+  //       // console.log('debt', results)
+  //       // if (results.length === 0) {
+  //       //   context.setState({
+  //       //     debt: 'unavailable'
+  //       //   })
+  //       // } else {
+  //       //   context.setState({
+  //       //     debt: 'unavailable'
+  //       //   })
+  //       // }
+  //     },
+  //     error: (error) => {
+  //       console.log('now you messed up')
+  //       console.log('error', error);
+  //     }
+  //   });
+  // }
 
-  getEntitlement() {
-    console.log('Getting Debt')
-    var context = this;
+  // getEntitlement() {
+  //   console.log('Getting Debt')
+  //   var context = this;
 
-    $.ajax({
-      type: 'GET',
-      url: '/entitlement',
-      contentType: 'application/json',
-      success: (results) => {
-        // console.log('entitlement', results)
-        // context.setState({
-        //   entitlement: 'unaailable';
-        // })
-      },
-      error: (error) => {
-        console.log('you have an error')
-        console.log('error', error);
-      }
-    });
-  }
+  //   $.ajax({
+  //     type: 'GET',
+  //     url: '/entitlement',
+  //     contentType: 'application/json',
+  //     success: (results) => {
+  //       // console.log('entitlement', results)
+  //       // context.setState({
+  //       //   entitlement: 'unaailable';
+  //       // })
+  //     },
+  //     error: (error) => {
+  //       console.log('you have an error')
+  //       console.log('error', error);
+  //     }
+  //   });
+  // }
 
-  getRecentTrip() {
+  getRecentTrip(callback) {
     $.ajax({
       url: '/recent',
       success: function(data) {
         console.log('recent trip', data);
+        callback(data);
       }
     });
   }

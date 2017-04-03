@@ -129,7 +129,6 @@ app.get('/getUsersFromFacebook', function(req, res) {
     })
 });
 app.get('/login', authHelper, (req, res) => {
-  console.log('wtf1--==\n\n\n\n');
   if (req.isAuthenticated()) {
     res.redirect('/');
   } else {
@@ -163,7 +162,7 @@ app.get('/recent', (req, res) => {
 });
 
 app.get('*', checkAuthentication, authHelper, (req, res) => {
-  console.log('wtf=======\n\n\n\n\n\n\n');
+  // console.log('wtf=======\n\n\n\n\n\n\n');
   if (!req.user) {
     res.redirect('/login');
   } else {

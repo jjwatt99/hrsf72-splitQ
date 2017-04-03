@@ -163,39 +163,39 @@ const storeReceiptItems = ({receiptUrl, allItemsArray, allPricesArray}) => {
   })
 }
 
-const assignItemsToMembers = (allItemsArray, params) => {
-  // console.log('assignItemsToMembers------', JSON.stringify(params));
+// const assignItemsToMembers = (allItemsArray, params) => {
+//   // console.log('assignItemsToMembers------', JSON.stringify(params));
 
-  let allConsumers = [];
-  let allItems = [];
+//   let allConsumers = [];
+//   let allItems = [];
 
-  for (let i = 0; i < allItemsArray.length; i++) {
-    for (let k = 0; k < params.items[i][0].members.length; k++) {
+//   for (let i = 0; i < allItemsArray.length; i++) {
+//     for (let k = 0; k < params.items[i][0].members.length; k++) {
 
-      while (k !== params.items[i][0].members.length) {
-        allConsumers.push(params.items[i][0].members[k]);
-        allItems.push(params.items[i][0].name);
-        k++;
-      }
-    }
-  }
-    for (let i = 0; i < allItems.length; i++) {
-      db.query(queryString.assignItemsToMembers, [
-          allItems[i],
-          params.receiptUrl,
-          params.username,
-          allConsumers[i],
-          params.receiptUrl,
-          params.username,
-          params.tripName
-        ], (err, results) => {
-          if (err) {
-            console.log(err);
-          }
-        }
-      )
-    }
-}
+//       while (k !== params.items[i][0].members.length) {
+//         allConsumers.push(params.items[i][0].members[k]);
+//         allItems.push(params.items[i][0].name);
+//         k++;
+//       }
+//     }
+//   }
+//     for (let i = 0; i < allItems.length; i++) {
+//       db.query(queryString.assignItemsToMembers, [
+//           allItems[i],
+//           params.receiptUrl,
+//           params.username,
+//           allConsumers[i],
+//           params.receiptUrl,
+//           params.username,
+//           params.tripName
+//         ], (err, results) => {
+//           if (err) {
+//             console.log(err);
+//           }
+//         }
+//       )
+//     }
+// }
 
 var createMemberSummary = (params) => {
   // console.log('----params passed down to Server here!!!!------', params);
@@ -225,15 +225,14 @@ var createMemberSummary = (params) => {
 
   function test() {
     for (var i = 0; i < memArray.length; i++) {
+      if (i === memArray.length) {
+        break;
+      }
       db.queryAsync('INSERT INTO members (name) select * from (select \'' + memArray[i][0] + '\') as tmp\
         where not exists (select name from members where name = \'' + memArray[i][0] + '\') limit 1');
     }
-    return Promise.map(memArray, (item) => {
-      return  db.queryAsync('SELECT members.id FROM members WHERE members.name = \'' + item[0] + '\'')
-        .then( function(result) {
-          return db.queryAsync('INSERT INTO trips_members (tripID, memberID) VALUES ((SELECT trips.id FROM trips\
-          WHERE trips.name = \'' + tripName + '\'), ' + result[0].id + ' )');
-        });
+    return new Promise(function(resolve, reject) {
+      resolve();
     });
   }
 
@@ -250,9 +249,9 @@ var createMemberSummary = (params) => {
         allPricesArray: allPricesArray
       });
     })
-    .then ( () => {
-      return assignItemsToMembers(allItemsArray, params);
-    })
+    // .then ( () => {
+    //   return assignItemsToMembers(allItemsArray, params);
+    // })
   })
   .catch( err => console.error('ERROR: createMemberSummary', err));
 }
@@ -301,61 +300,8 @@ var getRecent = function(res) {
       })
     }
     fillTrips();
-    // for (var i = 0; i < results.length; i++) {
-    //   var obj = {};
-    //   obj.names = [];
-    //   if (results[i] !== undefined) {
-    //     obj.trip = results[i].name;
-    //   }
-    //   function members() {
-    //     return db.queryAsync('select members.name from members, trips where trips.id = ' + results[i].id);
-    //   }
-    //   members()
-    //   .then(function(data) {
-    //     obj.names.push(data);
-    //     trips.push(obj);
-    //     if (i === results.length) {
-    //       console.log('db helpers names', obj.names);
-    //       res.json(trips);
-    //     }
-    //   });
-    // }
-    // console.log('db helpers names', names);
-    // res.json(names);
   })
 }
-
-  // let database = mysqlConfig.database;
-  
-  // if (database = 'gewd') {
-  //   database = '';
-  // } else if (database = 'heroku_a258462d4ded143') {
-  //   database = 'heroku_a258462d4ded143' + '.';
-  // }
-
-  // const queryStringGetAllTripsFromAdminName = `SELECT trips.name FROM ` + database + `trips WHERE trips.adminID = (SELECT members.id FROM ` + database + `members WHERE members.name = ?);`
-  // const queryStringGetTripIDFromTripName = `SELECT trips.id from ` + database + `trips WHERE trips.name = ?;`
-  // const queryStringGetMemberIDFromTripID = `SELECT trips_members.memberID from heroku_a258462d4ded143.trips_members WHERE trips_members.tripID = ?;`
-  // const queryStringGetMemberNameFromMemberID = `SELECT members.name FROM heroku_a258462d4ded143.members WHERE members.id = ?;`
-
-  // const queryStringGetReceiptNamesFromPayorIDAndTripID = `SELECT receipts.name FROM heroku_a258462d4ded143.receipts WHERE receipts.payorID = ? AND receipts.tripID = ?;`
-
-  // const queryStringGetSumBillFromReceiptName = `SELECT receipts.sum_bill FROM receipts WHERE receipts.name = ?;`
-  // const queryStringGetSumTaxFromReceiptName = `SELECT receipts.sum_tax FROM receipts WHERE receipts.name = ?;`
-  // const queryStringGetSumTipFromReceiptName = `SELECT receipts.sum_tip FROM receipts WHERE receipts.name = ?;`
-
-  // let adminName = params.adminName;
-  // let tripName = params.tripName;
-
-  // return db.queryAsync(queryStringGetAllTripsFromAdminName, adminName)
-  //   .then( tripsArray => tripsArray )
-    // .then( tripsArray => {
-    //   return Promise.map( tripsArray, trip => {
-    //     return db.queryAsync(queryStringGetTripIDFromTripName, trip.name)
-    //       .then( tripID => tripID )
-    //   })
-    // })
-    // .catch( err => console.log('ERROR: getAllTripsFromAdminName', err ));
 
 module.exports = {
   getAllReceipts,
@@ -365,7 +311,7 @@ module.exports = {
   addMembersToTrip,
   addReceipt,
   storeReceiptItems,
-  assignItemsToMembers,
+  // assignItemsToMembers,
   createMemberSummary,
   getRecent
 }
