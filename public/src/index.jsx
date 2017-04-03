@@ -272,6 +272,7 @@ class App extends React.Component {
   }
 
   addMember (itemArray) {
+
     var temp = this.state.members;
     this.memberExist(this.state.member, (exist) => {
       this.setState({
@@ -436,10 +437,15 @@ class App extends React.Component {
   }
 
   memberOnClick(member) {
-    this.setState({
-      selectMember: member
-        //
-    });
+    if (this.state.selectMember === '') {
+      this.setState({
+        selectMember: member
+      });
+    } else {
+      this.setState({
+        selectMember: ''
+      })
+    }
   }
 
   menuOnClick() {

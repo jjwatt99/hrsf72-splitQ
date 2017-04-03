@@ -1,3 +1,4 @@
+'use strict;'
 const mysql = require('mysql');
 const Promise = require('bluebird');
 const db = mysql.createPool({

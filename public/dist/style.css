@@ -208,8 +208,20 @@ input#input-amount-tip{
 
 input#input-member {
   background-color: #fff;
-  width: 80%;
+  width: 350px;
+  height: 45px;
   font-size: 0.9em;
+  display: inline-block;
+  text-decoration: none;
+	border: none;
+	color: darkgrey;
+	padding: 10px 25px;
+	font-size: 1rem;
+	border-radius: 3px;
+	cursor: pointer;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	position: relative;
 }
 
 label.file-upload-btn {
@@ -542,14 +554,15 @@ textarea#tripDesc::-webkit-input-placeholder{
 }
 
 .receipt-members-bar-mem {
+  background-color:lightgrey;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   margin: 0 4px;
-  height: 54px;
+  height: 69px;
   border-radius: 100px;
   padding: 0.2em 0.4em;
-  border: #444242 solid 1px;
+  border: lightgrey solid 1px;
   font-size: 0.9em;
 }
 
